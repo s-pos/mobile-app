@@ -40,4 +40,15 @@ class SharedPreferencesHelper {
   Future<bool> setIsLoggedIn(bool value) async {
     return _sharedPreferences.setBool(PreferencesConst.isLoggedIn, value);
   }
+
+  // language preferences
+  // getter for get currentLanguage
+  String? get currentLanguage =>
+      _sharedPreferences.getString(PreferencesConst.currentLanguage);
+
+  // setter for changing language apps
+  Future<void> changeLanguage(String language) {
+    return _sharedPreferences.setString(
+        PreferencesConst.currentLanguage, language);
+  }
 }
