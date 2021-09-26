@@ -50,7 +50,7 @@ class DioClient {
         onReceiveProgress: onReceivedProgress,
       );
 
-      return response.data;
+      return response.data["data"];
     } catch (e) {
       rethrow;
     }

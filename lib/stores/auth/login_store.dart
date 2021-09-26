@@ -56,8 +56,9 @@ abstract class _LoginStore with Store {
     final future = _auth.postLogin(email, password);
     loginFuture = ObservableFuture(future);
 
-    await future.then((res) {
+    await future.then((res) async {
       success = true;
+      print("res $res");
       // will store to share preferences
       _userStore.setToken("${res.tokenType} ${res.accessToken}");
     }).catchError((error) {

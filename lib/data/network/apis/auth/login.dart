@@ -17,10 +17,9 @@ class ApiLogin {
     };
 
     try {
-      final Response response =
-          await _dioClient.post(Endpoint.login, data: data);
+      final response = await _dioClient.post(Endpoint.login, data: data);
 
-      return response.data;
+      return LoginModel.fromJson(response);
     } catch (e) {
       rethrow;
     }

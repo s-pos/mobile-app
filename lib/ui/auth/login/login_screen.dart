@@ -35,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formLoginStore = FormLoginStore();
   late UserStore _userStore;
   late LoginStore _login;
+  String? a;
 
   // focus node
   late FocusNode _passwordFocusNode;
@@ -47,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
     _userStore = Provider.of<UserStore>(context);
     _login = LoginStore(getIt<RepositoryAuth>(), _userStore);
@@ -243,7 +244,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget navigate(BuildContext context) {
     if (_login.success) {
-      print(_userStore.token);
+      print("token => ${_userStore.token}");
     } else {
       return _showErrorMessage(_login.errorStore.errorMessage);
     }
