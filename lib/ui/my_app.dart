@@ -1,64 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:provider/provider.dart';
 import 'package:spos/app_config.dart';
+import 'package:spos/constants/app_theme.dart';
+import 'package:spos/data/repository.dart';
+import 'package:spos/di/components/service_locator.dart';
+import 'package:spos/routes/routes.dart';
+import 'package:spos/stores/language/language_store.dart';
+import 'package:spos/ui/onboard/onboard_screen.dart';
+import 'package:spos/utils/locale/app_localization.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
+
+  // create store
+  final LanguageStore _languageStore = LanguageStore(getIt<Repository>());
 
   @override
   Widget build(BuildContext context) {
     String appTitle = AppConfig.of(context)!.appTitle;
-    return MaterialApp(
-      title: appTitle,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: appTitle),
-    );
-  }
-}
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+    return MultiProvider(
+      providers: [
+        Provider(create: (_) => _languageStore),
+      ],
+      child: Observer(
+        builder: (context) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: appTitle,
+            theme: themeData,
+            routes: Routes.routes,
+            locale: Locale(_languageStore.locale),
+            supportedLocales: _languageStore.supportedLanguages
+                .map((language) => Locale(language.locale!, language.code))
+                .toList(),
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            home: const OnBoardingScreen(),
+          );
+        },
       ),
     );
   }

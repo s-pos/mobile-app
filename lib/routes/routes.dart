@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:spos/ui/onboard/onboard_screen.dart';
 
 class Routes {
   Routes._();
@@ -8,6 +9,6 @@ class Routes {
 
   static final routes = <String, WidgetBuilder>{
     onBoard: (BuildContext context) => const OnBoardingScreen(),
-    login: (BuildContext context) => const LoginScreen(),
+    // login: (BuildContext context) => const LoginScreen(),
   };
 }
