@@ -62,10 +62,10 @@ class TextFieldWidget extends StatelessWidget {
         decoration: InputDecoration(
           label: label == null ? null : Text(label!),
           border: OutlineInputBorder(
-            borderSide: BorderSide(),
+            borderSide: const BorderSide(),
             borderRadius: BorderRadius.circular(Dimens.defaultRadius),
           ),
-          labelStyle: textTheme.bodyText1!
+          labelStyle: textTheme.subtitle1!
               .copyWith(color: AppColors.primaryColor.withOpacity(.6)),
           hintText: hint,
           hintStyle: textTheme.bodyText1!

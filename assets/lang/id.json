@@ -2,5 +2,20 @@
   "onboard_offline_store": "Melakukan transaksi di Offline Store atau Online Store menjadi lebih mudah",
   "onboard_product_management": "Mudah mengatur produk pada Offline Store ataupun Online Store",
   "onboard_recent_transaction": "Real-time Transaksi pada Offline Store dan juga Online Store",
-  "onboard_button_login": "Masuk"
+  "onboard_button_next": "Lanjutkan",
+
+  "login_appbar": "Masuk",
+  "login_title": "Masuk untuk melanjutkan,",
+  "login_field_email_label": "Alamat e-mail",
+  "login_field_password_label": "Kata sandi",
+  "login_field_email_hint": "email@email.com",
+  "login_field_password_hint": "********",
+  "login_error_email_empty": "Email tidak boleh kosong",
+  "login_error_email_invalid": "Email tidak valid",
+  "login_error_password_empty": "Kata sandi tidak boleh kosong",
+  "login_error_min_char": "Minimal karakter adalah 6",
+  "login_button": "Masuk",
+  "login_text_register": "Belum mempunyai akun? ",
+  "login_text_register_link": "Daftar disini",
+  "login_text_forgot_password": "Lupa kata sandi?"
 }

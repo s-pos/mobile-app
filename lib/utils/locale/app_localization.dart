@@ -33,7 +33,10 @@ class AppLocalizations {
     return true;
   }
 
-  String translate(String key) {
+  String? translate(String? key) {
+    if (key == null || key.isEmpty) {
+      return null;
+    }
     return localizedStrings[key]!;
   }
 }

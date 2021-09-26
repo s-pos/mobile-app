@@ -108,8 +108,8 @@ flutter:
 flutter_native_splash:
   color: "#1956B4"
   image: assets/images/main_splashscreen.png
-  android_gravity: clip_vertical
-  ios_content_mode: scaleAspectFit
+  android_gravity: center
+  ios_content_mode: center
 
 # for generate icon launcher application
 flutter_icons:
