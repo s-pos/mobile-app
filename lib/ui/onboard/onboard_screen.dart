@@ -24,7 +24,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
     return Scaffold(
       body: AnnotatedRegion(
-        value: SystemUiOverlayStyle.light,
+        value: SystemUiOverlayStyle.dark,
         child: Container(
           padding: EdgeInsets.zero,
           child: Column(
@@ -52,12 +52,15 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 height: size.height * .1,
                 child: _currentPage == items.length - 1
                     ? Center(
-                        child: RoundedButtonWidget(
-                          buttonColor: AppColors.primaryColor,
-                          buttonText: AppLocalizations.of(context)
-                              .translate("onboard_button_login"),
-                          textColor: AppColors.white,
-                          onPressed: () => print("masuk"),
+                        child: Padding(
+                          padding: const EdgeInsets.all(Dimens.defaultPadding),
+                          child: RoundedButtonWidget(
+                            buttonColor: AppColors.primaryColor,
+                            buttonText: AppLocalizations.of(context)
+                                .translate("onboard_button_next"),
+                            textColor: AppColors.white,
+                            onPressed: () => print("masuk"),
+                          ),
                         ),
                       )
                     : null,

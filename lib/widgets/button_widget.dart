@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spos/constants/dimens.dart';
 
 class RoundedButtonWidget extends StatelessWidget {
   final String buttonText;
@@ -16,25 +17,21 @@ class RoundedButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
-
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(buttonColor),
-        shape: MaterialStateProperty.all(const StadiumBorder()),
-        animationDuration: const Duration(milliseconds: 700),
-        padding: MaterialStateProperty.all(
-          EdgeInsets.symmetric(
-            vertical: size.width * .03,
-            horizontal: size.width * .25,
-          ),
+    return SizedBox(
+      width: double.infinity,
+      height: Dimens.defaultHeight * 3,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(buttonColor),
+          shape: MaterialStateProperty.all(const StadiumBorder()),
+          animationDuration: const Duration(milliseconds: 700),
         ),
-      ),
-      child: Text(
-        buttonText,
-        style:
-            Theme.of(context).textTheme.subtitle1!.copyWith(color: textColor),
+        child: Text(
+          buttonText,
+          style:
+              Theme.of(context).textTheme.subtitle1!.copyWith(color: textColor),
+        ),
       ),
     );
   }
@@ -56,29 +53,23 @@ class OutlinedButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
-
-    return OutlinedButton(
-      onPressed: onPressed,
-      style: ButtonStyle(
-        side: MaterialStateProperty.all(
-          BorderSide(
-            color: buttonColor,
+    return SizedBox(
+      width: double.infinity,
+      height: Dimens.defaultHeight * 3,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: ButtonStyle(
+          side: MaterialStateProperty.all(
+            BorderSide(color: buttonColor, width: 1.5),
           ),
+          shape: MaterialStateProperty.all(const StadiumBorder()),
+          animationDuration: const Duration(milliseconds: 700),
         ),
-        shape: MaterialStateProperty.all(const StadiumBorder()),
-        animationDuration: const Duration(milliseconds: 700),
-        padding: MaterialStateProperty.all(
-          EdgeInsets.symmetric(
-            vertical: size.width * .03,
-            horizontal: size.width * .25,
-          ),
+        child: Text(
+          buttonText,
+          style:
+              Theme.of(context).textTheme.subtitle1!.copyWith(color: textColor),
         ),
-      ),
-      child: Text(
-        buttonText,
-        style:
-            Theme.of(context).textTheme.bodyText1!.copyWith(color: textColor),
       ),
     );
   }
