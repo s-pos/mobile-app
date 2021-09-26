@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:spos/constants/colors.dart';
 
 class RoundedButtonWidget extends StatelessWidget {
   final String buttonText;
