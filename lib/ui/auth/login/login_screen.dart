@@ -1,9 +1,16 @@
+import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:provider/provider.dart';
 import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
+import 'package:spos/data/network/apis/auth/login.dart';
+import 'package:spos/data/repository/auth.dart';
+import 'package:spos/di/components/service_locator.dart';
+import 'package:spos/stores/auth/login_store.dart';
 import 'package:spos/stores/form/login/form_login_store.dart';
+import 'package:spos/stores/user/user_store.dart';
 import 'package:spos/utils/locale/app_localization.dart';
 import 'package:spos/widgets/button_widget.dart';
 import 'package:spos/widgets/progress_indicator_widget.dart';
@@ -26,6 +33,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // store management
   final _formLoginStore = FormLoginStore();
+  late UserStore _userStore;
+  late LoginStore _login;
+  String? a;
 
   // focus node
   late FocusNode _passwordFocusNode;
@@ -35,6 +45,13 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     // set state for focus node password
     _passwordFocusNode = FocusNode();
+  }
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    _userStore = Provider.of<UserStore>(context);
+    _login = LoginStore(getIt<RepositoryAuth>(), _userStore);
   }
 
   @override
@@ -69,10 +86,15 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             Observer(
               builder: (context) {
-                return const Visibility(
-                  child: CustomProgressIndicatorWidget(),
-                  visible: false,
+                return Visibility(
+                  child: const CustomProgressIndicatorWidget(),
+                  visible: _login.loading,
                 );
+              },
+            ),
+            Observer(
+              builder: (context) {
+                return navigate(context);
               },
             ),
           ],
@@ -206,7 +228,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 buttonColor: AppColors.primaryColor,
                 buttonText: localizations!.translate("login_button")!,
                 textColor: AppColors.white,
-                onPressed: () => print("masuk"),
+                onPressed: () => _login.doLogin(
+                  _formLoginStore.email,
+                  _formLoginStore.password,
+                ),
               )
             : RoundedButtonWidget(
                 buttonColor: AppColors.primaryColor.withOpacity(.5),
@@ -215,5 +240,28 @@ class _LoginScreenState extends State<LoginScreen> {
               );
       },
     );
+  }
+
+  Widget navigate(BuildContext context) {
+    if (_login.success) {
+      print("token => ${_userStore.token}");
+    } else {
+      return _showErrorMessage(_login.errorStore.errorMessage);
+    }
+
+    return Container();
+  }
+
+  _showErrorMessage(String message) {
+    if (message.isNotEmpty) {
+      Future.delayed(const Duration(milliseconds: 0), () {
+        FlushbarHelper.createError(
+          message: message,
+          duration: const Duration(seconds: 5),
+        ).show(context);
+      });
+    }
+
+    return const SizedBox.shrink();
   }
 }

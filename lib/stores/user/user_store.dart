@@ -1,5 +1,5 @@
 import 'package:mobx/mobx.dart';
-import 'package:spos/data/repository.dart';
+import 'package:spos/data/repository/repository.dart';
 import 'package:spos/data/sharedpref/shared_preferences_helper.dart';
 import 'package:spos/stores/error/error_store.dart';
 
@@ -26,6 +26,7 @@ abstract class _UserStore with Store {
     _prefs.firstInstall.then(
       (value) => value != null ? firstInstall = value : firstInstall = false,
     );
+    _prefs.token.then((value) => token = value);
   }
 
   void _setupDisposers() {
@@ -37,9 +38,7 @@ abstract class _UserStore with Store {
 
   // User store all variables will be here
   bool firstInstall = false;
-
-  @computed
-  Future<String?> get token async => await _prefs.token;
+  String? token;
 
   // User store actions will be here
   // action for set user already go to page on_board
@@ -50,11 +49,17 @@ abstract class _UserStore with Store {
   // action for save token
   @action
   Future setToken(String value) async => await _prefs.setToken(value);
+  // reset first install
+  @action
+  Future<void> resetFirstInstall(bool value) async =>
+      await _prefs.setFirstInstall(false);
+  // reset user token
+  @action
+  Future<void> resetToken(String? value) async => await _prefs.removeToken();
 
-  // action for reset firstInstall
-  @action
-  Future resetFirstInstall(_) async => await _prefs.setFirstInstall(false);
-  // action for reset token
-  @action
-  Future resetToken(_) async => await _prefs.removeToken();
+  void dispose() {
+    for (final d in _disposers) {
+      d();
+    }
+  }
 }

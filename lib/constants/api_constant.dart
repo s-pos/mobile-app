@@ -1,7 +1,7 @@
 class ApiConstant {
   ApiConstant._();
 
-  static const String apiKey = "abc";
+  static const String apiKey = "0d8889998ae4f692794200d11d4e0d6278e169da";
 
   static const String dev = "dev";
   static const String appDev = "SPOS Dev";
