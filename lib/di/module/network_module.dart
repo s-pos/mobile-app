@@ -5,11 +5,15 @@ import 'package:spos/di/constants/di_constant.dart';
 
 abstract class NetworkModule {
   // singleton for dio
-  static Dio provideDio(String apiUrl, SharedPreferencesHelper _prefs) {
+  static Dio provideDio(String env, SharedPreferencesHelper _prefs) {
     final dio = Dio();
 
     dio
-      ..options.baseUrl = apiUrl
+      ..options.baseUrl = env == ApiConstant.dev
+          ? ApiConstant.baseUrlDev
+          : env == ApiConstant.prod
+              ? ApiConstant.baseUrlProd
+              : "" // let set empty string. because environment not found
       ..options.connectTimeout = ApiConstant.connectionTimeout
       ..options.receiveTimeout = ApiConstant.receivedTimeout
       ..options.headers = {"Content-Type": "application/json"}
