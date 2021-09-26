@@ -16,12 +16,20 @@ class RoundedButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
+
     return ElevatedButton(
       onPressed: onPressed,
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(buttonColor),
         shape: MaterialStateProperty.all(const StadiumBorder()),
         animationDuration: const Duration(milliseconds: 700),
+        padding: MaterialStateProperty.all(
+          EdgeInsets.symmetric(
+            vertical: size.width * .03,
+            horizontal: size.width * .25,
+          ),
+        ),
       ),
       child: Text(
         buttonText,
@@ -48,6 +56,8 @@ class OutlinedButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
+
     return OutlinedButton(
       onPressed: onPressed,
       style: ButtonStyle(
@@ -58,6 +68,12 @@ class OutlinedButtonWidget extends StatelessWidget {
         ),
         shape: MaterialStateProperty.all(const StadiumBorder()),
         animationDuration: const Duration(milliseconds: 700),
+        padding: MaterialStateProperty.all(
+          EdgeInsets.symmetric(
+            vertical: size.width * .03,
+            horizontal: size.width * .25,
+          ),
+        ),
       ),
       child: Text(
         buttonText,

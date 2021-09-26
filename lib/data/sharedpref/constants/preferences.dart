@@ -4,4 +4,7 @@ class PreferencesConst {
   static const String token = "token";
   static const String firstLogin = "first_login";
   static const String isLoggedIn = "is_logged_in";
+
+  // preferences
+  static const String currentLanguage = "current_language";
 }
