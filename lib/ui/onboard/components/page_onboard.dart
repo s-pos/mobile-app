@@ -37,7 +37,7 @@ class PageOnBoardingComponent extends StatelessWidget {
           const SizedBox(height: Dimens.defaultHeight),
           Center(
             child: Text(
-              AppLocalizations.of(context).translate(data.transalation),
+              AppLocalizations.of(context).translate(data.transalation)!,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.subtitle1,
             ),

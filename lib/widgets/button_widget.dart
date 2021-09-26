@@ -19,7 +19,7 @@ class RoundedButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: Dimens.defaultHeight * 3,
+      height: Dimens.defaultHeight * 2,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ButtonStyle(
@@ -55,7 +55,7 @@ class OutlinedButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: Dimens.defaultHeight * 3,
+      height: Dimens.defaultHeight * 2,
       child: OutlinedButton(
         onPressed: onPressed,
         style: ButtonStyle(

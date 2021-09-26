@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
 import 'package:spos/models/onboarding/onboarding_model.dart';
+import 'package:spos/routes/routes.dart';
+import 'package:spos/stores/user/user_store.dart';
 import 'package:spos/ui/onboard/components/page_onboard.dart';
 import 'package:spos/utils/locale/app_localization.dart';
 import 'package:spos/widgets/button_widget.dart';
@@ -17,6 +20,16 @@ class OnBoardingScreen extends StatefulWidget {
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
+
+  // Store for state management
+  // user store management
+  late UserStore _userStore;
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    _userStore = Provider.of<UserStore>(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +70,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                           child: RoundedButtonWidget(
                             buttonColor: AppColors.primaryColor,
                             buttonText: AppLocalizations.of(context)
-                                .translate("onboard_button_next"),
+                                .translate("onboard_button_next")!,
                             textColor: AppColors.white,
-                            onPressed: () => print("masuk"),
+                            onPressed: () => navigate(),
                           ),
                         ),
                       )
@@ -117,4 +130,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
       image: "assets/images/recent_transaction.svg",
     ),
   ];
+
+  void navigate() async {
+    if (await _userStore.setFirstInstall(true)) {
+      Navigator.pushNamedAndRemoveUntil(
+          context, Routes.login, (route) => false);
+    }
+  }
 }

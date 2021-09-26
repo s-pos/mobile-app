@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:spos/app_config.dart';
 import 'package:spos/constants/api_constant.dart';
@@ -16,5 +18,8 @@ Future<void> main() async {
     child: MyApp(),
   );
 
-  runApp(configuredApp);
+  return runZonedGuarded(() => runApp(configuredApp), (error, stack) {
+    print(error);
+    print(stack);
+  });
 }
