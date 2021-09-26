@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:spos/data/network/apis/auth/login.dart';
 import 'package:spos/data/network/dio_client.dart';
-import 'package:spos/data/repository.dart';
+import 'package:spos/data/repository/auth.dart';
+import 'package:spos/data/repository/repository.dart';
 import 'package:spos/data/sharedpref/shared_preferences_helper.dart';
 import 'package:spos/di/module/local_module.dart';
 import 'package:spos/di/module/network_module.dart';
@@ -42,7 +44,10 @@ Future<void> setupLocator(String env) async {
   getIt.registerSingleton(DioClient(getIt<Dio>()));
 
   // list api register will be here
+  getIt.registerSingleton(ApiLogin(getIt<DioClient>()));
 
   // register repository
   getIt.registerSingleton(Repository(getIt<SharedPreferencesHelper>()));
+  // register auth repository
+  getIt.registerSingleton(RepositoryAuth(getIt<ApiLogin>()));
 }

@@ -1,5 +1,5 @@
 import 'package:mobx/mobx.dart';
-import 'package:spos/data/repository.dart';
+import 'package:spos/data/repository/repository.dart';
 import 'package:spos/data/sharedpref/shared_preferences_helper.dart';
 import 'package:spos/stores/error/error_store.dart';
 
