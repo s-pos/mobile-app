@@ -45,6 +45,9 @@ dependencies:
   path_provider: ^2.0.5
   provider: ^6.0.0
 
+  # firebase remote config for any value
+  firebase_remote_config: ^0.11.0
+
   # shared preferences
   shared_preferences: ^2.0.8
 
