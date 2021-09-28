@@ -7,7 +7,6 @@ import 'package:spos/data/repository/repository.dart';
 import 'package:spos/data/sharedpref/shared_preferences_helper.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/routes/routes.dart';
-import 'package:spos/stores/auth/login_store.dart';
 import 'package:spos/stores/language/language_store.dart';
 import 'package:spos/stores/user/user_store.dart';
 import 'package:spos/ui/auth/login/login_screen.dart';
@@ -40,6 +39,7 @@ class MyApp extends StatelessWidget {
             title: appTitle,
             theme: themeData,
             routes: Routes.routes,
+            onGenerateRoute: Routes.routes,
             locale: Locale(_languageStore.locale),
             supportedLocales: _languageStore.supportedLanguages
                 .map((language) => Locale(language.locale!, language.code))

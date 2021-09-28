@@ -1,6 +1,7 @@
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:spos/constants/colors.dart';
@@ -10,6 +11,7 @@ import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/stores/auth/login_store.dart';
 import 'package:spos/stores/form/login/form_login_store.dart';
 import 'package:spos/stores/user/user_store.dart';
+import 'package:spos/utils/firebase/messaging.dart';
 import 'package:spos/utils/locale/app_localization.dart';
 import 'package:spos/widgets/button_widget.dart';
 import 'package:spos/widgets/progress_indicator_widget.dart';
@@ -44,6 +46,11 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     // set state for focus node password
     _passwordFocusNode = FocusNode();
+    FirebaseMessagingUtil.getToken();
+    FirebaseMessagingUtil.foregroundMessageHandler(
+      getIt<FlutterLocalNotificationsPlugin>(),
+      getIt<AndroidNotificationChannel>(),
+    );
   }
 
   @override

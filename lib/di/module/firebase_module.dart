@@ -1,5 +1,7 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:spos/di/constants/firebase_di_constant.dart';
 
 /// FirebaseModule
@@ -9,9 +11,14 @@ import 'package:spos/di/constants/firebase_di_constant.dart';
 ///         FirebaseCloudMessaging
 ///         DynamicLink
 abstract class FirebaseModule {
+  static Future<FirebaseApp> initFirebase() async {
+    return await Firebase.initializeApp();
+  }
+
   // initialize firebase remote config
-  static Future<RemoteConfig> provideRemoteConfig() async {
-    await Firebase.initializeApp();
+  static Future<RemoteConfig> provideRemoteConfig(
+      Future<FirebaseApp> firebaseApp) async {
+    await firebaseApp; // get firebase core
     final RemoteConfig remoteConfig = RemoteConfig.instance;
 
     // set default config instances
