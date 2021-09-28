@@ -1,7 +1,10 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:spos/di/components/service_locator.dart';
+import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/models/firebase/messaging_model.dart';
+import 'package:spos/routes/routes.dart';
 
 class FirebaseMessagingUtil {
   FirebaseMessagingUtil._();
@@ -47,8 +50,12 @@ class FirebaseMessagingUtil {
 
   // handle when push notification clicked
   static void clickedMessageHandler(RemoteMessage message) {
+    final NavigationModule navigation = getIt<NavigationModule>();
     final FirebaseMessagingModel? data =
         FirebaseMessagingModel.fromJson(message.data);
     print("message clicked $data");
+    if (data?.type == "explore") {
+      navigation.navigateToAndRemove(Routes.onBoard);
+    }
   }
 }

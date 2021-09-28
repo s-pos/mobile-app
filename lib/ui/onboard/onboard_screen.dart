@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
+import 'package:spos/di/components/service_locator.dart';
+import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/models/onboarding/onboarding_model.dart';
 import 'package:spos/routes/routes.dart';
 import 'package:spos/stores/user/user_store.dart';
@@ -19,6 +21,7 @@ class OnBoardingScreen extends StatefulWidget {
 
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
   final PageController _pageController = PageController(initialPage: 0);
+  final NavigationModule navigation = getIt<NavigationModule>();
   int _currentPage = 0;
 
   // Store for state management
@@ -133,8 +136,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   void navigate() async {
     if (await _userStore.setFirstInstall(true)) {
-      Navigator.pushNamedAndRemoveUntil(
-          context, Routes.login, (route) => false);
+      navigation.navigateToAndRemove(Routes.login);
     }
   }
 }
