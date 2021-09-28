@@ -6,8 +6,8 @@ import 'package:spos/constants/app_theme.dart';
 import 'package:spos/data/repository/repository.dart';
 import 'package:spos/data/sharedpref/shared_preferences_helper.dart';
 import 'package:spos/di/components/service_locator.dart';
+import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/routes/routes.dart';
-import 'package:spos/stores/auth/login_store.dart';
 import 'package:spos/stores/language/language_store.dart';
 import 'package:spos/stores/user/user_store.dart';
 import 'package:spos/ui/auth/login/login_screen.dart';
@@ -39,7 +39,8 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: appTitle,
             theme: themeData,
-            routes: Routes.routes,
+            navigatorKey: getIt<NavigationModule>().navigatorKey,
+            onGenerateRoute: Routes.routes,
             locale: Locale(_languageStore.locale),
             supportedLocales: _languageStore.supportedLanguages
                 .map((language) => Locale(language.locale!, language.code))
@@ -50,9 +51,8 @@ class MyApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            home: _userStore.firstInstall
-                ? const LoginScreen()
-                : const OnBoardingScreen(),
+            initialRoute:
+                _userStore.firstInstall ? Routes.login : Routes.onBoard,
           );
         },
       ),

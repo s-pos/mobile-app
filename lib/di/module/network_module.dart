@@ -1,11 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:spos/constants/api_constant.dart';
+import 'package:spos/data/firebase/remote_config_helper.dart';
+import 'package:spos/data/repository/firebase.dart';
 import 'package:spos/data/sharedpref/shared_preferences_helper.dart';
 import 'package:spos/di/constants/di_constant.dart';
 
 abstract class NetworkModule {
   // singleton for dio
-  static Dio provideDio(String env, SharedPreferencesHelper _prefs) {
+  static Dio provideDio(
+    String env,
+    SharedPreferencesHelper _prefs,
+    RemoteConfigHelper _remoteConfig,
+  ) {
     final dio = Dio();
 
     dio
@@ -38,7 +44,7 @@ abstract class NetworkModule {
             } else {
               // put x-api-key on header before sending to API
               options.headers
-                  .putIfAbsent(DiConstant.apiKey, () => ApiConstant.apiKey);
+                  .putIfAbsent(DiConstant.apiKey, () => _remoteConfig.apiKey);
             }
 
             // next to request
