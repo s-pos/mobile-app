@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:spos/ui/auth/login/login_screen.dart';
 import 'package:spos/ui/auth/register/register_screen.dart';
+import 'package:spos/ui/auth/verification/verification_screen.dart';
 import 'package:spos/ui/onboard/onboard_screen.dart';
 
 class Routes {
@@ -24,7 +25,10 @@ class Routes {
       case verificationRegister:
         final data = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (context) => const OnBoardingScreen(),
+          builder: (context) => VerificationScreen(
+            registerMessage: data["registerMessage"],
+            tokenEmail: data["tokenEmail"],
+          ),
         );
       default:
         return MaterialPageRoute(
