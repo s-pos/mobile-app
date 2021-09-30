@@ -17,5 +17,25 @@
   "login_button": "Masuk",
   "login_text_register": "Belum mempunyai akun? ",
   "login_text_register_link": "Daftar disini",
-  "login_text_forgot_password": "Lupa kata sandi?"
+  "login_text_forgot_password": "Lupa kata sandi?",
+
+  "register_title": "Selamat datang, ",
+  "register_subtitle": "silakan lakukan pendaftaran agar bisa meng-akses fitur-fitur keren",
+  "register_field_email_label": "Alamat e-mail",
+  "register_field_email_hint": "email@email.com",
+  "register_error_email_empty": "Email tidak boleh kosong",
+  "register_error_email_invalid": "Email tidak valid",
+  "register_field_password_label": "Kata sandi",
+  "register_field_password_hint": "******",
+  "register_error_password_empty": "Kata sandi tidak boleh kosong",
+  "register_error_password_min_char": "Minimal karakter adalah 6",
+  "register_field_phone_label": "Nomer telepon",
+  "register_field_phone_hint": "08xxxxxx",
+  "register_error_phone_empty": "Nomer telepon tidak boleh kosong",
+  "register_error_phone_miin_char": "Minimal 10 digit angka",
+  "register_error_phone_must_number": "Harus berupa angka",
+  "register_field_name_label": "Nama",
+  "register_field_name_hint": "Nama lengkapmu",
+  "register_error_name_empty": "Nama tidak boleh kosong",
+  "register_button": "Daftar"
 }
