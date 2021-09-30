@@ -18,6 +18,8 @@ class VerificationScreen extends StatefulWidget {
 class _VerificationScreenState extends State<VerificationScreen> {
   @override
   void initState() {
+    super.initState();
+
     if (widget.registerMessage != null) {
       FlushbarHelper.createSuccess(
         message: widget.registerMessage!,
