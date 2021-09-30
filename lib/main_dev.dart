@@ -8,6 +8,7 @@ import 'package:spos/constants/api_constant.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/firebase_module.dart';
 import 'package:spos/ui/my_app.dart';
+import 'package:spos/utils/firebase/dynamic_links.dart';
 import 'package:spos/utils/firebase/messaging.dart';
 
 Future<void> main() async {
@@ -26,6 +27,9 @@ Future<void> main() async {
   FirebaseMessaging.onMessageOpenedApp.listen(
     FirebaseMessagingUtil.clickedMessageHandler,
   );
+
+  // firebase init dynamic links
+  await FirebaseDynamicLinksUtil.initDynamicLinks();
 
   // firebase messaging for set foreground notification
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
