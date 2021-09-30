@@ -53,6 +53,8 @@ dependencies:
   # firebase cloud messaging
   firebase_messaging: ^10.0.7
   flutter_local_notifications: ^8.2.0
+  # firebase dynamic links
+  firebase_dynamic_links: ^2.0.10
 
   # shared preferences
   shared_preferences: ^2.0.8
@@ -65,6 +67,9 @@ dependencies:
 
   # google fonts
   google_fonts: ^2.1.0
+
+  # package info
+  package_info: ^2.0.2
 
 dev_dependencies:
   flutter_test:
