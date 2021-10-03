@@ -26,8 +26,8 @@ class Routes {
         final data = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
           builder: (context) => VerificationScreen(
-            registerMessage: data["registerMessage"],
-            tokenEmail: data["tokenEmail"],
+            otp: data["otp"],
+            email: data["email"],
           ),
         );
       default:

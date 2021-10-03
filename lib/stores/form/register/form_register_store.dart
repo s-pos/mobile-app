@@ -39,14 +39,12 @@ abstract class _FormRegisterStore with Store {
   String name = "";
 
   @computed
-  bool get success =>
+  bool get canRegister =>
+      !formError.hasError &&
       email.isNotEmpty &&
       password.isNotEmpty &&
       phone.isNotEmpty &&
       name.isNotEmpty;
-
-  @computed
-  bool get canRegister => !formError.hasError && success;
 
   // Action for form register will be here
   @action
@@ -117,6 +115,13 @@ abstract class _FormRegisterStore with Store {
     for (final d in _disposers) {
       d();
     }
+  }
+
+  void validateAll() {
+    validateEmail(email);
+    validatePassword(password);
+    validateName(name);
+    validatePhoneNumber(phone);
   }
 }
 

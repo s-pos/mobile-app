@@ -19,8 +19,8 @@
   "login_text_register_link": "Daftar disini",
   "login_text_forgot_password": "Lupa kata sandi?",
 
-  "register_title": "Selamat datang, ",
-  "register_subtitle": "silakan lakukan pendaftaran agar bisa meng-akses fitur-fitur keren",
+  "register_title": "Selamat datang,",
+  "register_subtitle": "Silakan lakukan pendaftaran agar bisa meng-akses fitur-fitur keren",
   "register_field_email_label": "Alamat e-mail",
   "register_field_email_hint": "email@email.com",
   "register_error_email_empty": "Email tidak boleh kosong",
@@ -32,10 +32,20 @@
   "register_field_phone_label": "Nomer telepon",
   "register_field_phone_hint": "08xxxxxx",
   "register_error_phone_empty": "Nomer telepon tidak boleh kosong",
-  "register_error_phone_miin_char": "Minimal 10 digit angka",
+  "register_error_phone_min_char": "Minimal 10 digit angka",
   "register_error_phone_must_number": "Harus berupa angka",
   "register_field_name_label": "Nama",
   "register_field_name_hint": "Nama lengkapmu",
   "register_error_name_empty": "Nama tidak boleh kosong",
-  "register_button": "Daftar"
+  "register_button": "Daftar",
+  "register_text_login": "Sudah mempunyai akun? ",
+  "register_text_login_link": "Masuk",
+
+  "verification_code_scaffold": "Verifikasi",
+  "verification_code_title": "Masukkan kode verifikasi",
+  "verification_code_subtitle": "Masukkan kode verifikasi yang telah dikirimkan melalui email ke ",
+  "verification_code_button": "Lanjut",
+  "verification_resend_code_wait": "Kirim ulang kode dalam ",
+  "verification_resend_code": "Tidak menerima kode verifikasi? ",
+  "verification_resend_code_link": "Kirim ulang"
 }

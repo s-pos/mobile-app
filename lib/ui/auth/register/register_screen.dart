@@ -10,10 +10,10 @@ import 'package:spos/models/auth/register_model.dart';
 import 'package:spos/routes/routes.dart';
 import 'package:spos/stores/auth/register_store.dart';
 import 'package:spos/stores/form/register/form_register_store.dart';
-import 'package:spos/ui/auth/register/components/field.dart';
 import 'package:spos/utils/locale/app_localization.dart';
 import 'package:spos/widgets/button_widget.dart';
 import 'package:spos/widgets/progress_indicator_widget.dart';
+import 'package:spos/widgets/textfield_widget.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -75,14 +75,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: Material(
         child: Stack(
           children: <Widget>[
-            Observer(
-              builder: (context) {
-                return Visibility(
-                  child: const CustomProgressIndicatorWidget(),
-                  visible: _register.loading,
-                );
-              },
-            ),
             Column(
               children: <Widget>[
                 SizedBox(
@@ -105,87 +97,75 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         Text(
                           localizations.translate("register_subtitle")!,
-                          style: textTheme.subtitle1,
+                          style: textTheme.subtitle2,
                         ),
                         const SizedBox(
                           height: Dimens.defaultHeight,
                         ),
-                        RegisterFieldComponent(
-                          observerName: "register-form-name",
-                          labelName: "register_field_name_label",
-                          hintName: "register_field_name_hint",
-                          errorMessage: _form.formError.name,
-                          icons: Icons.account_circle_sharp,
-                          textController: nameController,
-                          onChanged: (value) =>
-                              _form.setName(nameController.text),
-                          inputType: TextInputType.name,
-                          inputAction: TextInputAction.next,
-                          onSubmitted: (value) => FocusScope.of(context)
-                              .requestFocus(_emailFocusNode),
-                        ),
+                        _formName(),
                         const SizedBox(
                           height: Dimens.defaultHeight * 1.5,
                         ),
-                        RegisterFieldComponent(
-                          observerName: "register-form-email",
-                          labelName: "register_field_email_label",
-                          hintName: "register_field_email_hint",
-                          errorMessage: _form.formError.email,
-                          icons: Icons.email,
-                          textController: emailController,
-                          onChanged: (value) =>
-                              _form.setEmail(emailController.text),
-                          inputType: TextInputType.emailAddress,
-                          inputAction: TextInputAction.next,
-                          onSubmitted: (value) => FocusScope.of(context)
-                              .requestFocus(_passwordFocusNode),
-                        ),
+                        _formEmail(),
                         const SizedBox(
                           height: Dimens.defaultHeight * 1.5,
                         ),
-                        RegisterFieldComponent(
-                          observerName: "register-form-password",
-                          labelName: "register_field_password_label",
-                          hintName: "register_field_password_hint",
-                          errorMessage: _form.formError.password,
-                          icons: Icons.password,
-                          textController: passwordController,
-                          onChanged: (value) =>
-                              _form.setPassword(passwordController.text),
-                          inputType: TextInputType.visiblePassword,
-                          inputAction: TextInputAction.next,
-                          onSubmitted: (value) => FocusScope.of(context)
-                              .requestFocus(_phoneFocusNode),
-                        ),
+                        _formPassword(),
                         const SizedBox(
                           height: Dimens.defaultHeight * 1.5,
                         ),
-                        RegisterFieldComponent(
-                          observerName: "register-form-phone",
-                          labelName: "register_field_phone_label",
-                          hintName: "register_field_phone_hint",
-                          errorMessage: _form.formError.phone,
-                          icons: Icons.phone,
-                          textController: phoneController,
-                          onChanged: (value) =>
-                              _form.setPhone(phoneController.text),
-                          inputType: TextInputType.phone,
-                          inputAction: TextInputAction.done,
-                        ),
+                        _formPhone(),
                         const SizedBox(
                           height: Dimens.defaultHeight * 2,
                         ),
-                        RoundedButtonWidget(
-                          buttonColor: _form.canRegister
-                              ? AppColors.primaryColor
-                              : AppColors.primaryColor.withOpacity(.5),
-                          buttonText:
-                              localizations.translate("register_button")!,
-                          textColor: AppColors.white,
-                          onPressed: _form.canRegister
-                              ? () async => await doRegister()
-                              : null,
+                        Observer(
+                          builder: (context) => RoundedButtonWidget(
+                            buttonColor: _form.canRegister
+                                ? AppColors.primaryColor
+                                : AppColors.primaryColor.withOpacity(.5),
+                            buttonText:
+                                localizations.translate("register_button")!,
+                            textColor: AppColors.white,
+                            onPressed: _form.canRegister
+                                // ? () async => await doRegister()
+                                ? () => navigation.navigateTo(
+                                      Routes.verificationRegister,
+                                      arguments: {
+                                        "email": _form.email,
+                                        "password": _form.password,
+                                        "phone": _form.phone,
+                                        "name": _form.name,
+                                      },
+                                    )
+                                : null,
+                          ),
+                        ),
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: Dimens.defaultPadding * .5,
+                            ),
+                            child: GestureDetector(
+                              onTap: () => navigation.navigateTo(Routes.login),
+                              child: RichText(
+                                text: TextSpan(
+                                  text: localizations
+                                      .translate("register_text_login")!,
+                                  style: textTheme.bodyText2!.copyWith(
+                                      color: AppColors.grey.withOpacity(.7)),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: localizations.translate(
+                                          "register_text_login_link")!,
+                                      style: textTheme.bodyText2!.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                         )
                       ],
                     ),
@@ -193,8 +173,95 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ],
             ),
+            Observer(
+              builder: (context) {
+                return Visibility(
+                  child: const CustomProgressIndicatorWidget(),
+                  visible: _register.loading,
+                );
+              },
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _formName() {
+    final localizations = AppLocalizations.of(context);
+    return Observer(
+      name: "form-register-name",
+      builder: (context) => TextFieldWidget(
+        errorText: localizations.translate(_form.formError.name),
+        icon: Icons.account_circle_rounded,
+        textController: nameController,
+        hint: localizations.translate("register_field_name_hint")!,
+        label: localizations.translate("register_field_name_label")!,
+        inputAction: TextInputAction.next,
+        inputType: TextInputType.name,
+        isIcon: true,
+        onChanged: (value) => _form.setName(value),
+        onFieldSubmitted: (value) =>
+            FocusScope.of(context).requestFocus(_emailFocusNode),
+      ),
+    );
+  }
+
+  Widget _formEmail() {
+    final localizations = AppLocalizations.of(context);
+    return Observer(
+      name: "form-register-email",
+      builder: (context) => TextFieldWidget(
+        errorText: localizations.translate(_form.formError.email),
+        icon: Icons.email,
+        textController: emailController,
+        hint: localizations.translate("register_field_email_hint")!,
+        label: localizations.translate("register_field_email_label")!,
+        inputAction: TextInputAction.next,
+        inputType: TextInputType.emailAddress,
+        isIcon: true,
+        onChanged: (value) => _form.setEmail(value),
+        onFieldSubmitted: (value) =>
+            FocusScope.of(context).requestFocus(_passwordFocusNode),
+      ),
+    );
+  }
+
+  Widget _formPassword() {
+    final localizations = AppLocalizations.of(context);
+    return Observer(
+      name: "form-register-password",
+      builder: (context) => TextFieldWidget(
+        errorText: localizations.translate(_form.formError.password),
+        icon: Icons.lock,
+        textController: passwordController,
+        hint: localizations.translate("register_field_password_hint")!,
+        label: localizations.translate("register_field_password_label")!,
+        inputAction: TextInputAction.next,
+        inputType: TextInputType.visiblePassword,
+        isObscure: true,
+        isIcon: true,
+        onChanged: (value) => _form.setPassword(value),
+        onFieldSubmitted: (value) =>
+            FocusScope.of(context).requestFocus(_phoneFocusNode),
+      ),
+    );
+  }
+
+  Widget _formPhone() {
+    final localizations = AppLocalizations.of(context);
+    return Observer(
+      name: "form-register-phone",
+      builder: (context) => TextFieldWidget(
+        errorText: localizations.translate(_form.formError.phone),
+        icon: Icons.phone,
+        textController: phoneController,
+        hint: localizations.translate("register_field_phone_hint")!,
+        label: localizations.translate("register_field_phone_label")!,
+        inputAction: TextInputAction.done,
+        inputType: TextInputType.phone,
+        isIcon: true,
+        onChanged: (value) => _form.setPhone(value),
       ),
     );
   }
