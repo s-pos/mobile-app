@@ -72,7 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: Material(
+      body: SingleChildScrollView(
         child: Stack(
           children: <Widget>[
             Column(
@@ -80,13 +80,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(
                   height: size.height * .12,
                 ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: Dimens.defaultPadding,
-                    ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: Dimens.defaultPadding,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 400),
                     child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         Text(
                           localizations.translate("register_title")!,
@@ -175,9 +178,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             Observer(
               builder: (context) {
-                return Visibility(
-                  child: const CustomProgressIndicatorWidget(),
-                  visible: _register.loading,
+                return SizedBox(
+                  height: 600,
+                  child: Visibility(
+                    child: const CustomProgressIndicatorWidget(),
+                    visible: _register.loading,
+                  ),
                 );
               },
             ),

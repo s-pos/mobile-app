@@ -95,7 +95,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     const SizedBox(
-                      height: Dimens.defaultHeight * 3,
+                      height: Dimens.defaultHeight * 2,
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
