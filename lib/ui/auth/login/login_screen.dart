@@ -41,7 +41,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formLoginStore = FormLoginStore();
   late UserStore _userStore;
   late LoginStore _login;
-  String? a;
 
   // focus node
   late FocusNode _passwordFocusNode;
@@ -74,6 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordController.dispose();
     _passwordFocusNode.dispose();
     _formLoginStore.dispose();
+    _login.dispose();
   }
 
   @override
@@ -234,21 +234,19 @@ class _LoginScreenState extends State<LoginScreen> {
     return Observer(
       name: "login-button",
       builder: (context) {
-        return _formLoginStore.canLogin
-            ? RoundedButtonWidget(
-                buttonColor: AppColors.primaryColor,
-                buttonText: localizations!.translate("login_button")!,
-                textColor: AppColors.white,
-                onPressed: () => _login.doLogin(
-                  _formLoginStore.email,
-                  _formLoginStore.password,
-                ),
-              )
-            : RoundedButtonWidget(
-                buttonColor: AppColors.primaryColor.withOpacity(.5),
-                buttonText: localizations!.translate("login_button")!,
-                textColor: AppColors.white,
-              );
+        return RoundedButtonWidget(
+          buttonColor: _formLoginStore.canLogin
+              ? AppColors.primaryColor
+              : AppColors.primaryColor.withOpacity(.5),
+          buttonText: localizations!.translate("login_button")!,
+          textColor: AppColors.white,
+          onPressed: _formLoginStore.canLogin
+              ? () => _login.doLogin(
+                    _formLoginStore.email,
+                    _formLoginStore.password,
+                  )
+              : null,
+        );
       },
     );
   }

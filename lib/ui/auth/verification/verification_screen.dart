@@ -39,7 +39,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
   final NavigationModule navigation = getIt<NavigationModule>();
 
   // variables
-  bool button = false;
+  late Timer time;
   int start = 120;
   String startString = "02:00";
   bool wait = true;
@@ -59,6 +59,12 @@ class _VerificationScreenState extends State<VerificationScreen> {
       // doing verification here for dynamic links
       _form.setOtp(widget.otp!);
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    time.cancel();
   }
 
   @override
@@ -275,7 +281,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
   void startTimer() {
     const sec = Duration(seconds: 1);
-    Timer.periodic(sec, (timer) {
+    time = Timer.periodic(sec, (timer) {
       if (start == 0) {
         setState(() {
           timer.cancel();

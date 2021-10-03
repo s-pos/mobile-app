@@ -22,6 +22,9 @@ abstract class _FormVerificationStore with Store {
         otp = otp.substring(0, otp.length - 1);
       }
     } else if (value.length == 1) {
+      if (otp.length == 6) {
+        return;
+      }
       // check if set string length is 1 (manual input)
       otp = otp + value;
     } else if (value.length == 6) {

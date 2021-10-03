@@ -227,6 +227,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         inputType: TextInputType.emailAddress,
         isIcon: true,
         onChanged: (value) => _form.setEmail(value),
+        focusNode: _emailFocusNode,
         onFieldSubmitted: (value) =>
             FocusScope.of(context).requestFocus(_passwordFocusNode),
       ),
@@ -248,6 +249,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         isObscure: true,
         isIcon: true,
         onChanged: (value) => _form.setPassword(value),
+        focusNode: _passwordFocusNode,
         onFieldSubmitted: (value) =>
             FocusScope.of(context).requestFocus(_phoneFocusNode),
       ),
@@ -267,6 +269,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         inputAction: TextInputAction.done,
         inputType: TextInputType.phone,
         isIcon: true,
+        focusNode: _phoneFocusNode,
         onChanged: (value) => _form.setPhone(value),
       ),
     );
