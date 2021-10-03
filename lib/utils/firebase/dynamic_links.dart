@@ -28,7 +28,7 @@ class FirebaseDynamicLinksUtil {
     if (deeplink.path.contains("v")) {
       String? token = deeplink.queryParameters["token"];
       final data = {
-        "tokenEmail": token,
+        "otp": token,
       };
 
       navigation.navigateToAndRemove(Routes.verificationRegister,
