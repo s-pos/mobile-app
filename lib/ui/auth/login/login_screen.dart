@@ -1,8 +1,8 @@
-import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
@@ -264,10 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
   _showErrorMessage(String message) {
     if (message.isNotEmpty) {
       Future.delayed(const Duration(milliseconds: 0), () {
-        FlushbarHelper.createError(
-          message: message,
-          duration: const Duration(seconds: 5),
-        ).show(context);
+        Fluttertoast.showToast(msg: message);
       });
     }
 

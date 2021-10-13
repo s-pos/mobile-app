@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spos/data/firebase/remote_config_helper.dart';
 import 'package:spos/data/network/apis/auth/login.dart';
 import 'package:spos/data/network/apis/auth/register.dart';
+import 'package:spos/data/network/apis/auth/verification.dart';
 import 'package:spos/data/network/dio_client.dart';
 import 'package:spos/data/repository/auth.dart';
 import 'package:spos/data/repository/firebase.dart';
@@ -86,12 +87,19 @@ Future<void> setupLocator(String env) async {
   getIt.registerSingleton(ApiLogin(dioClient));
   // API Register
   getIt.registerSingleton(ApiRegister(dioClient));
+  // API Verification
+  getIt.registerSingleton(ApiVerification(dioClient));
 
   // register repository
   getIt.registerSingleton(Repository(getIt<SharedPreferencesHelper>()));
   // register auth repository
   getIt.registerSingleton(
-      RepositoryAuth(getIt<ApiLogin>(), getIt<ApiRegister>()));
+    RepositoryAuth(
+      getIt<ApiLogin>(),
+      getIt<ApiRegister>(),
+      getIt<ApiVerification>(),
+    ),
+  );
   // register firebase repository
   getIt.registerSingleton(FirebaseRepository(getIt<RemoteConfigHelper>()));
 }

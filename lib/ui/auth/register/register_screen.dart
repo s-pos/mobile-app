@@ -1,6 +1,6 @@
-import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
 import 'package:spos/data/repository/auth.dart';
@@ -130,16 +130,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 localizations.translate("register_button")!,
                             textColor: AppColors.white,
                             onPressed: _form.canRegister
-                                // ? () async => await doRegister()
-                                ? () => navigation.navigateTo(
-                                      Routes.verificationRegister,
-                                      arguments: {
-                                        "email": _form.email,
-                                        "password": _form.password,
-                                        "phone": _form.phone,
-                                        "name": _form.name,
-                                      },
-                                    )
+                                ? () async => await doRegister()
                                 : null,
                           ),
                         ),
@@ -285,11 +276,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (_register.success) {
       final data = {
-        "registerMessage": res?.data,
+        "email": emailController.text,
       };
       navigation.navigateTo(Routes.verificationRegister, arguments: data);
     } else {
-      FlushbarHelper.createError(message: _register.errorStore.errorMessage);
+      Fluttertoast.showToast(msg: _register.errorStore.errorMessage);
     }
   }
 }

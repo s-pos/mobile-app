@@ -1,13 +1,15 @@
 import 'dart:async';
 
-import 'package:another_flushbar/flushbar_helper.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
+import 'package:spos/data/repository/auth.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
+import 'package:spos/models/auth/verification_model.dart';
 import 'package:spos/stores/auth/verification_store.dart';
 import 'package:spos/stores/form/verification/form_verification_store.dart';
 import 'package:spos/utils/locale/app_localization.dart';
@@ -45,12 +47,15 @@ class _VerificationScreenState extends State<VerificationScreen> {
   bool wait = true;
 
   // store
-  final FormVerificationStore _form = FormVerificationStore();
-  final VerificationStore _verification = VerificationStore();
+  final VerificationStore _verification =
+      VerificationStore(getIt<RepositoryAuth>());
+  late FormVerificationStore _form;
 
   @override
   void initState() {
     super.initState();
+
+    _form = FormVerificationStore(_verification, widget.email);
 
     // start timer countdown
     startTimer();
@@ -59,6 +64,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
       // doing verification here for dynamic links
       _form.setOtp(widget.otp!);
     }
+
+    if (_form.otp.length == 6) {}
   }
 
   @override
@@ -175,31 +182,35 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 ),
               ),
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * .09,
-              child: Padding(
-                padding: const EdgeInsets.all(Dimens.defaultPadding),
-                child: Observer(
-                  builder: (context) => RoundedButtonWidget(
-                    buttonColor: _form.canVerification
-                        ? AppColors.primaryColor
-                        : AppColors.primaryColor.withOpacity(.5),
-                    buttonText:
-                        localizations.translate("verification_code_button")!,
-                    textColor: AppColors.white,
-                    onPressed: _form.canVerification
-                        ? () => print("verification")
-                        : null,
-                  ),
-                ),
-              ),
-            ),
+            _buttonVerification(),
             NumericPadWidget(
               onNumberSelected: (value) => setState(
                 () => _form.setOtp(value.toString()),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buttonVerification() {
+    final AppLocalizations localizations = AppLocalizations.of(context);
+
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * .09,
+      child: Padding(
+        padding: const EdgeInsets.all(Dimens.defaultPadding),
+        child: Observer(
+          builder: (context) => RoundedButtonWidget(
+            isLoading: _verification.loading,
+            buttonColor: _form.canVerification
+                ? AppColors.primaryColor
+                : AppColors.primaryColor.withOpacity(.5),
+            buttonText: localizations.translate("verification_code_button")!,
+            textColor: AppColors.white,
+            onPressed: _form.canVerification ? () => doRequest() : null,
+          ),
         ),
       ),
     );
@@ -277,6 +288,20 @@ class _VerificationScreenState extends State<VerificationScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> doRequest() async {
+    final VerificationModel? res =
+        await _verification.otpRegister(widget.email, _form.otp);
+
+    if (_verification.success) {
+      Fluttertoast.showToast(msg: res!.data!, gravity: ToastGravity.TOP);
+    } else {
+      Fluttertoast.showToast(
+        msg: _verification.errorStore.errorMessage,
+        gravity: ToastGravity.TOP,
+      );
+    }
   }
 
   void startTimer() {

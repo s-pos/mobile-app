@@ -21,7 +21,7 @@ dependencies:
   dio: ^4.0.0
 
   # toast message or flushbar for notification
-  another_flushbar: ^1.10.24
+  fluttertoast: ^8.0.8
 
   # load svg
   flutter_svg: ^0.22.0
