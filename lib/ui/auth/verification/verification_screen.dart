@@ -10,6 +10,7 @@ import 'package:spos/data/repository/auth.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/models/auth/verification_model.dart';
+import 'package:spos/routes/routes.dart';
 import 'package:spos/stores/auth/verification_store.dart';
 import 'package:spos/stores/form/verification/form_verification_store.dart';
 import 'package:spos/utils/locale/app_localization.dart';
@@ -291,11 +292,12 @@ class _VerificationScreenState extends State<VerificationScreen> {
   }
 
   Future<void> doRequest() async {
-    final VerificationModel? res =
-        await _verification.otpRegister(widget.email, _form.otp);
+    await _verification.otpRegister(widget.email, _form.otp);
 
     if (_verification.success) {
-      Fluttertoast.showToast(msg: res!.data!, gravity: ToastGravity.TOP);
+      Fluttertoast.showToast(
+          msg: _verification.res!.data!, gravity: ToastGravity.TOP);
+      navigation.navigateTo(Routes.login);
     } else {
       Fluttertoast.showToast(
         msg: _verification.errorStore.errorMessage,

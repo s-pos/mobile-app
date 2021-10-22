@@ -1,8 +1,8 @@
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobx/mobx.dart';
-import 'package:spos/data/repository/auth.dart';
 import 'package:spos/di/components/service_locator.dart';
-import 'package:spos/models/auth/verification_model.dart';
+import 'package:spos/di/module/navigation_module.dart';
+import 'package:spos/routes/routes.dart';
 import 'package:spos/stores/auth/verification_store.dart';
 
 part 'form_verification_store.g.dart';
@@ -14,6 +14,8 @@ abstract class _FormVerificationStore with Store {
   // verification store
   final VerificationStore _verificationStore;
   final String email;
+
+  final NavigationModule navigation = getIt<NavigationModule>();
 
   _FormVerificationStore(VerificationStore verificationStore, this.email)
       : _verificationStore = verificationStore;
@@ -49,11 +51,12 @@ abstract class _FormVerificationStore with Store {
 
   @action
   Future<void> autoRequestVerification() async {
-    final VerificationModel? res =
-        await _verificationStore.otpRegister(email, otp);
+    await _verificationStore.otpRegister(email, otp);
 
     if (_verificationStore.success) {
-      Fluttertoast.showToast(msg: res!.data!);
+      Fluttertoast.showToast(
+          msg: _verificationStore.res!.data!, gravity: ToastGravity.TOP);
+      navigation.navigateTo(Routes.login);
     } else {
       Fluttertoast.showToast(msg: _verificationStore.errorStore.errorMessage);
     }
