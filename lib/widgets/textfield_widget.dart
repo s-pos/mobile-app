@@ -11,7 +11,7 @@ class TextFieldWidget extends StatelessWidget {
   final bool isObscure;
   final bool isIcon;
   final TextInputType? inputType;
-  final TextEditingController textController;
+  final TextEditingController? textController;
   final EdgeInsets padding;
   final Color labelColor;
   final Color hintColor;
@@ -25,7 +25,7 @@ class TextFieldWidget extends StatelessWidget {
   const TextFieldWidget({
     required this.icon,
     required this.errorText,
-    required this.textController,
+    this.textController,
     this.inputType,
     this.label,
     this.hint,

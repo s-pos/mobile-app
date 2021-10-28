@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
-import 'package:spos/data/repository/auth.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/models/auth/register_model.dart';
 import 'package:spos/routes/routes.dart';
-import 'package:spos/stores/auth/register_store.dart';
-import 'package:spos/stores/form/register/form_register_store.dart';
+import 'package:spos/stores/form/register/register_store.dart';
+import 'package:spos/ui/auth/register/components/field_email.dart';
+import 'package:spos/ui/auth/register/components/field_name.dart';
+import 'package:spos/ui/auth/register/components/field_password.dart';
+import 'package:spos/ui/auth/register/components/field_phone.dart';
 import 'package:spos/utils/locale/app_localization.dart';
 import 'package:spos/widgets/button_widget.dart';
 import 'package:spos/widgets/progress_indicator_widget.dart';
@@ -26,12 +29,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   // navigation
   final NavigationModule navigation = getIt<NavigationModule>();
 
-  // list text controller will be here
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-
   // focus node will be here
   late FocusNode _emailFocusNode;
   late FocusNode _passwordFocusNode;
@@ -39,13 +36,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   // store management will be here
   late RegisterStore _register;
-  final FormRegisterStore _form = FormRegisterStore();
 
   @override
   void initState() {
     super.initState();
-    // init store
-    _register = RegisterStore(getIt<RepositoryAuth>());
     // focus node
     _emailFocusNode = FocusNode();
     _passwordFocusNode = FocusNode();
@@ -53,15 +47,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _register = Provider.of<RegisterStore>(context);
+  }
+
+  @override
   void dispose() {
     super.dispose();
 
     _register.dispose();
-    _form.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    nameController.dispose();
-    phoneController.dispose();
   }
 
   @override
@@ -105,31 +100,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const SizedBox(
                           height: Dimens.defaultHeight,
                         ),
-                        _formName(),
-                        const SizedBox(
-                          height: Dimens.defaultHeight * 1.5,
+                        RegisterFieldName(emailFocusNode: _emailFocusNode),
+                        RegisterFieldEmail(
+                          emailFocusNode: _emailFocusNode,
+                          passwordFocusNode: _passwordFocusNode,
                         ),
-                        _formEmail(),
-                        const SizedBox(
-                          height: Dimens.defaultHeight * 1.5,
-                        ),
-                        _formPassword(),
-                        const SizedBox(
-                          height: Dimens.defaultHeight * 1.5,
-                        ),
-                        _formPhone(),
-                        const SizedBox(
-                          height: Dimens.defaultHeight * 2,
-                        ),
+                        RegisterFieldPassword(
+                            passwordFocusNode: _passwordFocusNode,
+                            phoneFocusNode: _phoneFocusNode),
+                        RegisterFieldPhone(phoneFocusNode: _phoneFocusNode),
                         Observer(
                           builder: (context) => RoundedButtonWidget(
-                            buttonColor: _form.canRegister
+                            buttonColor: _register.canRegister
                                 ? AppColors.primaryColor
                                 : AppColors.primaryColor.withOpacity(.5),
                             buttonText:
                                 localizations.translate("register_button")!,
                             textColor: AppColors.white,
-                            onPressed: _form.canRegister
+                            onPressed: _register.canRegister
                                 ? () async => await doRegister()
                                 : null,
                           ),
@@ -170,7 +158,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Observer(
               builder: (context) {
                 return SizedBox(
-                  height: 600,
+                  height: size.height,
                   child: Visibility(
                     child: const CustomProgressIndicatorWidget(),
                     visible: _register.loading,
@@ -184,99 +172,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _formName() {
-    final localizations = AppLocalizations.of(context);
-    return Observer(
-      name: "form-register-name",
-      builder: (context) => TextFieldWidget(
-        errorText: localizations.translate(_form.formError.name),
-        icon: Icons.account_circle_rounded,
-        textController: nameController,
-        hint: localizations.translate("register_field_name_hint")!,
-        label: localizations.translate("register_field_name_label")!,
-        inputAction: TextInputAction.next,
-        inputType: TextInputType.name,
-        isIcon: true,
-        onChanged: (value) => _form.setName(value),
-        onFieldSubmitted: (value) =>
-            FocusScope.of(context).requestFocus(_emailFocusNode),
-      ),
-    );
-  }
-
-  Widget _formEmail() {
-    final localizations = AppLocalizations.of(context);
-    return Observer(
-      name: "form-register-email",
-      builder: (context) => TextFieldWidget(
-        errorText: localizations.translate(_form.formError.email),
-        icon: Icons.email,
-        textController: emailController,
-        hint: localizations.translate("register_field_email_hint")!,
-        label: localizations.translate("register_field_email_label")!,
-        inputAction: TextInputAction.next,
-        inputType: TextInputType.emailAddress,
-        isIcon: true,
-        onChanged: (value) => _form.setEmail(value),
-        focusNode: _emailFocusNode,
-        onFieldSubmitted: (value) =>
-            FocusScope.of(context).requestFocus(_passwordFocusNode),
-      ),
-    );
-  }
-
-  Widget _formPassword() {
-    final localizations = AppLocalizations.of(context);
-    return Observer(
-      name: "form-register-password",
-      builder: (context) => TextFieldWidget(
-        errorText: localizations.translate(_form.formError.password),
-        icon: Icons.lock,
-        textController: passwordController,
-        hint: localizations.translate("register_field_password_hint")!,
-        label: localizations.translate("register_field_password_label")!,
-        inputAction: TextInputAction.next,
-        inputType: TextInputType.visiblePassword,
-        isObscure: true,
-        isIcon: true,
-        onChanged: (value) => _form.setPassword(value),
-        focusNode: _passwordFocusNode,
-        onFieldSubmitted: (value) =>
-            FocusScope.of(context).requestFocus(_phoneFocusNode),
-      ),
-    );
-  }
-
-  Widget _formPhone() {
-    final localizations = AppLocalizations.of(context);
-    return Observer(
-      name: "form-register-phone",
-      builder: (context) => TextFieldWidget(
-        errorText: localizations.translate(_form.formError.phone),
-        icon: Icons.phone,
-        textController: phoneController,
-        hint: localizations.translate("register_field_phone_hint")!,
-        label: localizations.translate("register_field_phone_label")!,
-        inputAction: TextInputAction.done,
-        inputType: TextInputType.phone,
-        isIcon: true,
-        focusNode: _phoneFocusNode,
-        onChanged: (value) => _form.setPhone(value),
-      ),
-    );
-  }
-
   Future<void> doRegister() async {
-    final RegisterModel? res = await _register.register(
-      emailController.text,
-      passwordController.text,
-      phoneController.text,
-      nameController.text,
+    await _register.register(
+      _register.email,
+      _register.password,
+      _register.phone,
+      _register.name,
     );
 
     if (_register.success) {
       final data = {
-        "email": emailController.text,
+        "email": _register.email,
       };
       navigation.navigateTo(Routes.verificationRegister, arguments: data);
     } else {

@@ -19,6 +19,7 @@ import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/di/module/network_module.dart';
 import 'package:spos/stores/error/error_store.dart';
 import 'package:spos/stores/form/login/form_login_store.dart';
+import 'package:spos/stores/form/register/register_store.dart';
 
 final getIt = GetIt.instance;
 
@@ -68,7 +69,7 @@ Future<void> setupLocator(String env) async {
   // registering default http request for method
   // GET, POST
   // with parameters dio we register before
-  getIt.registerSingleton(DioClient(getIt<Dio>()));
+  getIt.registerSingleton<DioClient>(DioClient(getIt<Dio>()));
 
   // registering default channel notification for android
   getIt.registerSingleton<AndroidNotificationChannel>(
@@ -84,16 +85,17 @@ Future<void> setupLocator(String env) async {
   // list api register will be here
   final DioClient dioClient = getIt<DioClient>();
   // API Login
-  getIt.registerSingleton(ApiLogin(dioClient));
+  getIt.registerSingleton<ApiLogin>(ApiLogin(dioClient));
   // API Register
-  getIt.registerSingleton(ApiRegister(dioClient));
+  getIt.registerSingleton<ApiRegister>(ApiRegister(dioClient));
   // API Verification
-  getIt.registerSingleton(ApiVerification(dioClient));
+  getIt.registerSingleton<ApiVerification>(ApiVerification(dioClient));
 
   // register repository
-  getIt.registerSingleton(Repository(getIt<SharedPreferencesHelper>()));
+  getIt.registerSingleton<Repository>(
+      Repository(getIt<SharedPreferencesHelper>()));
   // register auth repository
-  getIt.registerSingleton(
+  getIt.registerSingleton<RepositoryAuth>(
     RepositoryAuth(
       getIt<ApiLogin>(),
       getIt<ApiRegister>(),
@@ -101,5 +103,9 @@ Future<void> setupLocator(String env) async {
     ),
   );
   // register firebase repository
-  getIt.registerSingleton(FirebaseRepository(getIt<RemoteConfigHelper>()));
+  getIt.registerSingleton<FirebaseRepository>(
+      FirebaseRepository(getIt<RemoteConfigHelper>()));
+
+  // form and all method related with registration
+  getIt.registerFactory(() => RegisterStore(getIt<RepositoryAuth>()));
 }
