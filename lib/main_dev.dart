@@ -29,7 +29,7 @@ Future<void> main() async {
   );
 
   // firebase init dynamic links
-  await FirebaseDynamicLinksUtil.initDynamicLinks();
+  await FirebaseDynamicLinksUtil().initDynamicLinks();
 
   // firebase messaging for set foreground notification
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(

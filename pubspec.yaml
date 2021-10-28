@@ -3,7 +3,7 @@ description: SPOS adalah Store POS (Point of Sales)
 
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -21,7 +21,7 @@ dependencies:
   dio: ^4.0.0
 
   # toast message or flushbar for notification
-  another_flushbar: ^1.10.24
+  fluttertoast: ^8.0.8
 
   # load svg
   flutter_svg: ^0.22.0

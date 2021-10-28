@@ -42,17 +42,21 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
+    lintOptions {
+        checkReleaseBuilds false
+    }
+
     signingConfigs {
         dev {
-            storeFile file("/Users/pandu/.android/spos-dev.keystore")
-            storePassword "spos-dev"
-            keyAlias "spos_dev"
-            keyPassword "spos-dev"
+            storeFile file("/Users/pandu/.android/dev-release.jks")
+            storePassword "sposdev"
+            keyAlias "dev-release"
+            keyPassword "sposdev"
         }
         prod {
-            storeFile file("/Users/pandu/.android/spos.keystore")
+            storeFile file("/Users/pandu/.android/prod-release.jks")
             storePassword "spos-prod"
-            keyAlias "spos_production"
+            keyAlias "prod-release"
             keyPassword "spos-prod"
         }
     }
