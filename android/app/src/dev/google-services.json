@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "309453924003-nlg8uea51scrq92lfr4lr2s3140g7p0q.apps.googleusercontent.com",
+          "client_id": "309453924003-44ovg1el33n76528j92pbsp1ll711un1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "id.spos.dev",
-            "certificate_hash": "102553a71d82cb20da47724b071c6b315acba33b"
+            "certificate_hash": "5fe06e942ce8952a8571f453835de2419e6c88e7"
           }
         },
         {
@@ -37,6 +37,14 @@
             {
               "client_id": "309453924003-spi3kktu1tflqumffo575phr51rcemss.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "309453924003-bu130ld1tqprosrnomacnoefnputghoc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "id.spos.dev",
+                "app_store_id": "12345678"
+              }
             }
           ]
         }

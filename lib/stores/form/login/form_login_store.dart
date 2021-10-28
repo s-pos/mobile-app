@@ -30,15 +30,11 @@ abstract class _FormLoginStore with Store {
   @observable
   String password = "";
 
-  @observable
-  bool success = false;
-
-  @observable
-  bool loading = false;
+  @computed
+  bool get success => email.isNotEmpty && password.isNotEmpty;
 
   @computed
-  bool get canLogin =>
-      !formError.hasError && email.isNotEmpty && password.isNotEmpty;
+  bool get canLogin => !formError.hasError && success;
 
   // form login actions will be here
   @action

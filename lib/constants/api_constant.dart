@@ -3,7 +3,7 @@ class ApiConstant {
 
   static const String dev = "dev";
   static const String appDev = "SPOS Dev";
-  static const String baseUrlDev = "https://api-staging.brinvestyuk.com";
+  static const String baseUrlDev = "https://api-dev.brinvestyuk.com";
 
   static const String prod = "Production";
   static const String appProd = "SPOS";

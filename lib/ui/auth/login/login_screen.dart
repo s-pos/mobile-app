@@ -1,13 +1,15 @@
-import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
 import 'package:spos/data/repository/auth.dart';
 import 'package:spos/di/components/service_locator.dart';
+import 'package:spos/di/module/navigation_module.dart';
+import 'package:spos/routes/routes.dart';
 import 'package:spos/stores/auth/login_store.dart';
 import 'package:spos/stores/form/login/form_login_store.dart';
 import 'package:spos/stores/user/user_store.dart';
@@ -32,11 +34,13 @@ class _LoginScreenState extends State<LoginScreen> {
   Size? size;
   AppLocalizations? localizations;
 
+  // navigation
+  final NavigationModule navigation = getIt<NavigationModule>();
+
   // store management
   final _formLoginStore = FormLoginStore();
   late UserStore _userStore;
   late LoginStore _login;
-  String? a;
 
   // focus node
   late FocusNode _passwordFocusNode;
@@ -69,6 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordController.dispose();
     _passwordFocusNode.dispose();
     _formLoginStore.dispose();
+    _login.dispose();
   }
 
   @override
@@ -85,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Column(
               children: [
                 SizedBox(
-                  height: size!.height * .1,
+                  height: size!.height * .12,
                 ),
                 _build(),
               ],
@@ -155,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   vertical: Dimens.defaultPadding * .5,
                 ),
                 child: GestureDetector(
-                  onTap: () => print("daftar"),
+                  onTap: () => navigation.navigateTo(Routes.register),
                   child: RichText(
                     text: TextSpan(
                       text: localizations?.translate("login_text_register"),
@@ -189,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
           label: localizations?.translate("login_field_email_label"),
           hint: localizations?.translate("login_field_email_hint"),
           icon: Icons.email,
-          iconColor: AppColors.accentColor,
+          isIcon: true,
           textController: _emailController,
           inputType: TextInputType.emailAddress,
           inputAction: TextInputAction.next,
@@ -211,7 +216,7 @@ class _LoginScreenState extends State<LoginScreen> {
           hint: localizations?.translate("login_field_password_hint"),
           isObscure: true,
           icon: Icons.lock,
-          iconColor: AppColors.accentColor,
+          isIcon: true,
           textController: _passwordController,
           inputAction: TextInputAction.done,
           inputType: TextInputType.visiblePassword,
@@ -229,21 +234,19 @@ class _LoginScreenState extends State<LoginScreen> {
     return Observer(
       name: "login-button",
       builder: (context) {
-        return _formLoginStore.canLogin
-            ? RoundedButtonWidget(
-                buttonColor: AppColors.primaryColor,
-                buttonText: localizations!.translate("login_button")!,
-                textColor: AppColors.white,
-                onPressed: () => _login.doLogin(
-                  _formLoginStore.email,
-                  _formLoginStore.password,
-                ),
-              )
-            : RoundedButtonWidget(
-                buttonColor: AppColors.primaryColor.withOpacity(.5),
-                buttonText: localizations!.translate("login_button")!,
-                textColor: AppColors.white,
-              );
+        return RoundedButtonWidget(
+          buttonColor: _formLoginStore.canLogin
+              ? AppColors.primaryColor
+              : AppColors.primaryColor.withOpacity(.5),
+          buttonText: localizations!.translate("login_button")!,
+          textColor: AppColors.white,
+          onPressed: _formLoginStore.canLogin
+              ? () => _login.doLogin(
+                    _formLoginStore.email,
+                    _formLoginStore.password,
+                  )
+              : null,
+        );
       },
     );
   }
@@ -261,10 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
   _showErrorMessage(String message) {
     if (message.isNotEmpty) {
       Future.delayed(const Duration(milliseconds: 0), () {
-        FlushbarHelper.createError(
-          message: message,
-          duration: const Duration(seconds: 5),
-        ).show(context);
+        Fluttertoast.showToast(msg: message);
       });
     }
 
