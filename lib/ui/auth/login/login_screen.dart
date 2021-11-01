@@ -16,7 +16,6 @@ import 'package:spos/utils/firebase/messaging.dart';
 import 'package:spos/utils/locale/app_localization.dart';
 import 'package:spos/widgets/button_widget.dart';
 import 'package:spos/widgets/progress_indicator_widget.dart';
-import 'package:spos/widgets/textfield_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
