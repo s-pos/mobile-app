@@ -6,13 +6,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
-import 'package:spos/data/repository/auth.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/routes/routes.dart';
-import 'package:spos/stores/auth/login_store.dart';
-import 'package:spos/stores/form/login/form_login_store.dart';
-import 'package:spos/stores/user/user_store.dart';
+import 'package:spos/stores/form/login/login_store.dart';
 import 'package:spos/utils/firebase/messaging.dart';
 import 'package:spos/utils/locale/app_localization.dart';
 import 'package:spos/widgets/button_widget.dart';
@@ -38,8 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final NavigationModule navigation = getIt<NavigationModule>();
 
   // store management
-  final _formLoginStore = FormLoginStore();
-  late UserStore _userStore;
   late LoginStore _login;
 
   // focus node
@@ -60,8 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    _userStore = Provider.of<UserStore>(context);
-    _login = LoginStore(getIt<RepositoryAuth>(), _userStore);
+    _login = Provider.of<LoginStore>(context);
   }
 
   @override
@@ -69,10 +63,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
 
     // reset all instance
-    _emailController.dispose();
-    _passwordController.dispose();
-    _passwordFocusNode.dispose();
-    _formLoginStore.dispose();
     _login.dispose();
   }
 
@@ -198,10 +188,10 @@ class _LoginScreenState extends State<LoginScreen> {
           textController: _emailController,
           inputType: TextInputType.emailAddress,
           inputAction: TextInputAction.next,
-          onChanged: (value) => _formLoginStore.setEmail(_emailController.text),
+          onChanged: (value) => _login.setEmail(_emailController.text),
           onFieldSubmitted: (value) =>
               FocusScope.of(context).requestFocus(_passwordFocusNode),
-          errorText: localizations?.translate(_formLoginStore.formError.email),
+          errorText: localizations?.translate(_login.formError.email),
         );
       },
     );
@@ -221,10 +211,8 @@ class _LoginScreenState extends State<LoginScreen> {
           inputAction: TextInputAction.done,
           inputType: TextInputType.visiblePassword,
           focusNode: _passwordFocusNode,
-          onChanged: (value) =>
-              _formLoginStore.setPassword(_passwordController.text),
-          errorText:
-              localizations?.translate(_formLoginStore.formError.password),
+          onChanged: (value) => _login.setPassword(_passwordController.text),
+          errorText: localizations?.translate(_login.formError.password),
         );
       },
     );
@@ -235,15 +223,15 @@ class _LoginScreenState extends State<LoginScreen> {
       name: "login-button",
       builder: (context) {
         return RoundedButtonWidget(
-          buttonColor: _formLoginStore.canLogin
+          buttonColor: _login.canLogin
               ? AppColors.primaryColor
               : AppColors.primaryColor.withOpacity(.5),
           buttonText: localizations!.translate("login_button")!,
           textColor: AppColors.white,
-          onPressed: _formLoginStore.canLogin
+          onPressed: _login.canLogin
               ? () => _login.doLogin(
-                    _formLoginStore.email,
-                    _formLoginStore.password,
+                    _login.email,
+                    _login.password,
                   )
               : null,
         );
@@ -253,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget navigate(BuildContext context) {
     if (_login.success) {
-      print("token => ${_userStore.token}");
+      print("token => ${_login..token}");
     } else {
       return _showErrorMessage(_login.errorStore.errorMessage);
     }

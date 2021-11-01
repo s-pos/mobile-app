@@ -6,7 +6,6 @@ import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
-import 'package:spos/models/auth/register_model.dart';
 import 'package:spos/routes/routes.dart';
 import 'package:spos/stores/form/register/register_store.dart';
 import 'package:spos/ui/auth/register/components/field_email.dart';
@@ -16,7 +15,6 @@ import 'package:spos/ui/auth/register/components/field_phone.dart';
 import 'package:spos/utils/locale/app_localization.dart';
 import 'package:spos/widgets/button_widget.dart';
 import 'package:spos/widgets/progress_indicator_widget.dart';
-import 'package:spos/widgets/textfield_widget.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);

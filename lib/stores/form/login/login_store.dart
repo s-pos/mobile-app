@@ -1,18 +1,33 @@
 import 'package:mobx/mobx.dart';
+import 'package:spos/data/repository/auth.dart';
+import 'package:spos/models/auth/login_model.dart';
 import 'package:spos/stores/error/error_store.dart';
+import 'package:spos/stores/user/user_store.dart';
+import 'package:spos/utils/dio/dio_error_utils.dart';
 import 'package:validators/validators.dart';
 
-part 'form_login_store.g.dart';
+part 'login_store.g.dart';
 
-class FormLoginStore = _FormLoginStore with _$FormLoginStore;
+class LoginStore = _LoginStore with _$LoginStore;
 
-abstract class _FormLoginStore with Store {
+abstract class _LoginStore with Store {
   // disposers
   late List<ReactionDisposer> _disposers;
   // store for handling error validating
   final FormLoginErrorStore formError = FormLoginErrorStore();
 
-  _FormLoginStore() {
+  // store management
+  // User store
+  final UserStore _userStore;
+  // Error store for handling error
+  final ErrorStore errorStore = ErrorStore();
+
+  // repository auth
+  final RepositoryAuth _auth;
+
+  _LoginStore(RepositoryAuth repositoryAuth, UserStore userStore)
+      : _auth = repositoryAuth,
+        _userStore = userStore {
     _setupValidations();
   }
 
@@ -30,11 +45,25 @@ abstract class _FormLoginStore with Store {
   @observable
   String password = "";
 
-  @computed
-  bool get success => email.isNotEmpty && password.isNotEmpty;
+  @observable
+  bool success = false;
 
   @computed
-  bool get canLogin => !formError.hasError && success;
+  bool get canLogin =>
+      !formError.hasError && email.isNotEmpty && password.isNotEmpty;
+
+  static ObservableFuture<LoginModel?> emptyLoginResponse =
+      ObservableFuture.value(null);
+
+  @observable
+  ObservableFuture<LoginModel?> loginFuture =
+      ObservableFuture<LoginModel?>(emptyLoginResponse);
+
+  @computed
+  bool get loading => loginFuture.status == FutureStatus.pending;
+
+  @computed
+  String? get token => _userStore.token;
 
   // form login actions will be here
   @action
@@ -67,6 +96,25 @@ abstract class _FormLoginStore with Store {
     } else {
       formError.password = null;
     }
+  }
+
+  @action
+  // Login store actions will be here
+  Future doLogin(String email, String password) async {
+    success = false;
+
+    final future = _auth.postLogin(email, password);
+    loginFuture = ObservableFuture(future);
+
+    await future.then((res) async {
+      success = true;
+      // will store to share preferences
+      _userStore.setToken("${res.tokenType} ${res.accessToken}");
+    }).catchError((error) {
+      success = false;
+      Map<String, dynamic> err = DioErrorUtil.handleError(error);
+      errorStore.errorMessage = err["reason"];
+    });
   }
 
   void dispose() {

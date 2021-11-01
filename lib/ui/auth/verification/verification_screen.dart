@@ -9,7 +9,6 @@ import 'package:spos/constants/dimens.dart';
 import 'package:spos/data/repository/auth.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
-import 'package:spos/models/auth/verification_model.dart';
 import 'package:spos/routes/routes.dart';
 import 'package:spos/stores/auth/verification_store.dart';
 import 'package:spos/stores/form/verification/form_verification_store.dart';

@@ -18,8 +18,9 @@ import 'package:spos/di/module/local_module.dart';
 import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/di/module/network_module.dart';
 import 'package:spos/stores/error/error_store.dart';
-import 'package:spos/stores/form/login/form_login_store.dart';
+import 'package:spos/stores/form/login/login_store.dart';
 import 'package:spos/stores/form/register/register_store.dart';
+import 'package:spos/stores/user/user_store.dart';
 
 final getIt = GetIt.instance;
 
@@ -29,8 +30,6 @@ Future<void> setupLocator(String env) async {
   // list factory no needed parameters
   // factory error store handler
   getIt.registerFactory(() => ErrorStore());
-  // factory form login
-  getIt.registerFactory(() => FormLoginStore());
 
   // async singleton
   // this is will register dependencies
@@ -108,4 +107,11 @@ Future<void> setupLocator(String env) async {
 
   // form and all method related with registration
   getIt.registerFactory(() => RegisterStore(getIt<RepositoryAuth>()));
+  // factory for form and all method login
+  getIt.registerFactory(
+    () => LoginStore(
+      getIt<RepositoryAuth>(),
+      getIt<UserStore>(),
+    ),
+  );
 }
