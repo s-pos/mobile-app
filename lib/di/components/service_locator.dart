@@ -105,6 +105,9 @@ Future<void> setupLocator(String env) async {
   getIt.registerSingleton<FirebaseRepository>(
       FirebaseRepository(getIt<RemoteConfigHelper>()));
 
+  // Factory for user
+  getIt.registerFactory(
+      () => UserStore(getIt<Repository>(), getIt<SharedPreferencesHelper>()));
   // form and all method related with registration
   getIt.registerFactory(() => RegisterStore(getIt<RepositoryAuth>()));
   // factory for form and all method login

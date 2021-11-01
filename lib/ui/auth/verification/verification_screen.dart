@@ -7,6 +7,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
+import 'package:spos/constants/snackbar.dart';
 import 'package:spos/data/repository/auth.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
@@ -350,7 +351,17 @@ class _VerificationScreenState extends State<VerificationScreen> {
       startString = "02:00";
       wait = true;
 
+      final snackBar = SnackbarCustom.snackBar(
+          message: _register.res!.data!, isError: false);
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
       startTimer();
+    } else {
+      final snackBar = SnackbarCustom.snackBar(
+          message: _register.errorStore.errorMessage, isError: true);
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 }

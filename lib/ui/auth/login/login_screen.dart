@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
+import 'package:spos/constants/snackbar.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/routes/routes.dart';
@@ -90,11 +91,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: const CustomProgressIndicatorWidget(),
                   visible: _login.loading,
                 );
-              },
-            ),
-            Observer(
-              builder: (context) {
-                return navigate(context);
               },
             ),
           ],
@@ -182,34 +178,26 @@ class _LoginScreenState extends State<LoginScreen> {
               : AppColors.primaryColor.withOpacity(.5),
           buttonText: localizations!.translate("login_button")!,
           textColor: AppColors.white,
-          onPressed: _login.canLogin
-              ? () => _login.doLogin(
-                    _login.email,
-                    _login.password,
-                  )
-              : null,
+          onPressed: _login.canLogin ? () => doLogin() : null,
         );
       },
     );
   }
 
-  Widget navigate(BuildContext context) {
+  void doLogin() async {
+    await _login.doLogin(_login.email, _login.password);
+
     if (_login.success) {
-      print("token => ${_login..token}");
+      final snackBar = SnackbarCustom.snackBar(
+          message: "Token mu adalah ${_login.token}", isError: false);
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
-      return _showErrorMessage(_login.errorStore.errorMessage);
+      final snackBar = SnackbarCustom.snackBar(
+          message: "${_login.token} ${_login.errorStore.errorMessage}",
+          isError: true);
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
-
-    return Container();
-  }
-
-  _showErrorMessage(String message) {
-    if (message.isNotEmpty) {
-      Future.delayed(const Duration(milliseconds: 0), () {
-        Fluttertoast.showToast(msg: message);
-      });
-    }
-
-    return const SizedBox.shrink();
   }
 }

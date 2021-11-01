@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
+import 'package:spos/constants/snackbar.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/routes/routes.dart';
@@ -184,7 +184,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       };
       navigation.navigateTo(Routes.verificationRegister, arguments: data);
     } else {
-      Fluttertoast.showToast(msg: _register.errorStore.errorMessage);
+      final snackBar = SnackbarCustom.snackBar(
+          message: _register.errorStore.errorMessage, isError: true);
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 }

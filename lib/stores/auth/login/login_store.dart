@@ -100,7 +100,12 @@ abstract class _LoginStore with Store {
   }
 
   @action
+  void removeToken() {
+    _userStore.resetToken();
+  }
+
   // Login store actions will be here
+  @action
   Future doLogin(String email, String password) async {
     success = false;
 
@@ -109,8 +114,9 @@ abstract class _LoginStore with Store {
 
     await future.then((res) async {
       success = true;
+      String token = "${res.tokenType} ${res.accessToken}";
       // will store to share preferences
-      _userStore.setToken("${res.tokenType} ${res.accessToken}");
+      _userStore.setToken(token);
     }).catchError((error) {
       success = false;
       Map<String, dynamic> err = DioErrorUtil.handleError(error);
