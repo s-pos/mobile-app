@@ -10,6 +10,8 @@ import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/routes/routes.dart';
 import 'package:spos/stores/form/login/login_store.dart';
+import 'package:spos/ui/auth/login/components/field_email.dart';
+import 'package:spos/ui/auth/login/components/field_password.dart';
 import 'package:spos/utils/firebase/messaging.dart';
 import 'package:spos/utils/locale/app_localization.dart';
 import 'package:spos/widgets/button_widget.dart';
@@ -25,8 +27,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   // variables
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
   TextTheme? textTheme;
   Size? size;
   AppLocalizations? localizations;
@@ -120,11 +120,8 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(
               height: Dimens.defaultHeight * 1.5,
             ),
-            _formEmail(),
-            const SizedBox(
-              height: Dimens.defaultHeight * 1.5,
-            ),
-            _formPassword(),
+            LoginFieldEmail(passwordFocusNode: _passwordFocusNode),
+            LoginFieldPassword(passwordFocusNode: _passwordFocusNode),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -173,48 +170,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _formEmail() {
-    return Observer(
-      name: "login-form-email",
-      builder: (context) {
-        return TextFieldWidget(
-          label: localizations?.translate("login_field_email_label"),
-          hint: localizations?.translate("login_field_email_hint"),
-          icon: Icons.email,
-          isIcon: true,
-          textController: _emailController,
-          inputType: TextInputType.emailAddress,
-          inputAction: TextInputAction.next,
-          onChanged: (value) => _login.setEmail(_emailController.text),
-          onFieldSubmitted: (value) =>
-              FocusScope.of(context).requestFocus(_passwordFocusNode),
-          errorText: localizations?.translate(_login.formError.email),
-        );
-      },
-    );
-  }
-
-  Widget _formPassword() {
-    return Observer(
-      name: "login-form-password",
-      builder: (context) {
-        return TextFieldWidget(
-          label: localizations?.translate("login_field_password_label"),
-          hint: localizations?.translate("login_field_password_hint"),
-          isObscure: true,
-          icon: Icons.lock,
-          isIcon: true,
-          textController: _passwordController,
-          inputAction: TextInputAction.done,
-          inputType: TextInputType.visiblePassword,
-          focusNode: _passwordFocusNode,
-          onChanged: (value) => _login.setPassword(_passwordController.text),
-          errorText: localizations?.translate(_login.formError.password),
-        );
-      },
     );
   }
 
