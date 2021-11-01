@@ -7,7 +7,7 @@ import 'package:spos/constants/dimens.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/routes/routes.dart';
-import 'package:spos/stores/form/register/register_store.dart';
+import 'package:spos/stores/auth/register/register_store.dart';
 import 'package:spos/ui/auth/register/components/field_email.dart';
 import 'package:spos/ui/auth/register/components/field_name.dart';
 import 'package:spos/ui/auth/register/components/field_password.dart';

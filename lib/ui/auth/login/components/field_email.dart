@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:spos/constants/dimens.dart';
-import 'package:spos/stores/form/login/login_store.dart';
+import 'package:spos/stores/auth/login/login_store.dart';
 import 'package:spos/utils/locale/app_localization.dart';
 import 'package:spos/widgets/textfield_widget.dart';
 

@@ -18,8 +18,8 @@ import 'package:spos/di/module/local_module.dart';
 import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/di/module/network_module.dart';
 import 'package:spos/stores/error/error_store.dart';
-import 'package:spos/stores/form/login/login_store.dart';
-import 'package:spos/stores/form/register/register_store.dart';
+import 'package:spos/stores/auth/login/login_store.dart';
+import 'package:spos/stores/auth/register/register_store.dart';
 import 'package:spos/stores/user/user_store.dart';
 
 final getIt = GetIt.instance;

@@ -3,7 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:spos/constants/dimens.dart';
-import 'package:spos/stores/form/register/register_store.dart';
+import 'package:spos/stores/auth/register/register_store.dart';
 import 'package:spos/utils/locale/app_localization.dart';
 import 'package:spos/widgets/textfield_widget.dart';
 

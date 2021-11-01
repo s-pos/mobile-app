@@ -9,7 +9,7 @@ import 'package:spos/constants/dimens.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/routes/routes.dart';
-import 'package:spos/stores/form/login/login_store.dart';
+import 'package:spos/stores/auth/login/login_store.dart';
 import 'package:spos/ui/auth/login/components/field_email.dart';
 import 'package:spos/ui/auth/login/components/field_password.dart';
 import 'package:spos/utils/firebase/messaging.dart';
