@@ -9,6 +9,7 @@ import 'package:spos/data/sharedpref/shared_preferences_helper.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/routes/routes.dart';
+import 'package:spos/stores/form/login/login_store.dart';
 import 'package:spos/stores/form/register/register_store.dart';
 import 'package:spos/stores/language/language_store.dart';
 import 'package:spos/stores/user/user_store.dart';
@@ -23,6 +24,8 @@ class MyApp extends StatelessWidget {
   final UserStore _userStore =
       UserStore(getIt<Repository>(), getIt<SharedPreferencesHelper>());
   final RegisterStore _registerStore = RegisterStore(getIt<RepositoryAuth>());
+  final LoginStore _loginStore =
+      LoginStore(getIt<RepositoryAuth>(), getIt<UserStore>());
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +36,7 @@ class MyApp extends StatelessWidget {
         Provider(create: (_) => _languageStore),
         Provider(create: (_) => _userStore),
         Provider(create: (_) => _registerStore),
+        Provider(create: (_) => _loginStore)
       ],
       child: Observer(
         name: "global-observer",
