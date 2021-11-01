@@ -288,8 +288,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
               text: AppLocalizations.of(context)
                   .translate("verification_resend_code_link"),
               style: Theme.of(context).textTheme.subtitle2,
-              recognizer: TapGestureRecognizer()
-                ..onTap = () => print('Tap Here onTap'),
+              recognizer: TapGestureRecognizer()..onTap = () => requestOtp(),
             ),
           ],
         ),
@@ -340,5 +339,18 @@ class _VerificationScreenState extends State<VerificationScreen> {
         });
       }
     });
+  }
+
+  void requestOtp() async {
+    await _register.register(
+        _register.email, _register.password, _register.phone, _register.name);
+
+    if (_register.success) {
+      start = 120;
+      startString = "02:00";
+      wait = true;
+
+      startTimer();
+    }
   }
 }

@@ -5,7 +5,6 @@ import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/models/auth/verification_model.dart';
 import 'package:spos/routes/routes.dart';
-import 'package:spos/stores/auth/verification_store.dart';
 import 'package:spos/stores/error/error_store.dart';
 import 'package:spos/utils/dio/dio_error_utils.dart';
 
@@ -86,14 +85,13 @@ abstract class _VerificationStore with Store {
 
   @action
   Future<void> autoRequestVerification() async {
-    await _verificationStore.otpRegister(email, otp);
+    await otpRegister(email, otp);
 
-    if (_verificationStore.success) {
-      Fluttertoast.showToast(
-          msg: _verificationStore.res!.data!, gravity: ToastGravity.TOP);
+    if (success) {
+      Fluttertoast.showToast(msg: res!.data!, gravity: ToastGravity.TOP);
       navigation.navigateTo(Routes.login);
     } else {
-      Fluttertoast.showToast(msg: _verificationStore.errorStore.errorMessage);
+      Fluttertoast.showToast(msg: errorStore.errorMessage);
     }
   }
 
