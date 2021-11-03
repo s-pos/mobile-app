@@ -6,18 +6,17 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
-import 'package:spos/data/repository/auth.dart';
+import 'package:spos/constants/snackbar.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/routes/routes.dart';
-import 'package:spos/stores/auth/login_store.dart';
-import 'package:spos/stores/form/login/form_login_store.dart';
-import 'package:spos/stores/user/user_store.dart';
+import 'package:spos/stores/auth/login/login_store.dart';
+import 'package:spos/ui/auth/login/components/field_email.dart';
+import 'package:spos/ui/auth/login/components/field_password.dart';
 import 'package:spos/utils/firebase/messaging.dart';
 import 'package:spos/utils/locale/app_localization.dart';
 import 'package:spos/widgets/button_widget.dart';
 import 'package:spos/widgets/progress_indicator_widget.dart';
-import 'package:spos/widgets/textfield_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -28,8 +27,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   // variables
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
   TextTheme? textTheme;
   Size? size;
   AppLocalizations? localizations;
@@ -38,8 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final NavigationModule navigation = getIt<NavigationModule>();
 
   // store management
-  final _formLoginStore = FormLoginStore();
-  late UserStore _userStore;
   late LoginStore _login;
 
   // focus node
@@ -60,8 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    _userStore = Provider.of<UserStore>(context);
-    _login = LoginStore(getIt<RepositoryAuth>(), _userStore);
+    _login = Provider.of<LoginStore>(context);
   }
 
   @override
@@ -69,10 +63,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
 
     // reset all instance
-    _emailController.dispose();
-    _passwordController.dispose();
-    _passwordFocusNode.dispose();
-    _formLoginStore.dispose();
     _login.dispose();
   }
 
@@ -103,11 +93,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 );
               },
             ),
-            Observer(
-              builder: (context) {
-                return navigate(context);
-              },
-            ),
           ],
         ),
       ),
@@ -130,11 +115,8 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(
               height: Dimens.defaultHeight * 1.5,
             ),
-            _formEmail(),
-            const SizedBox(
-              height: Dimens.defaultHeight * 1.5,
-            ),
-            _formPassword(),
+            LoginFieldEmail(passwordFocusNode: _passwordFocusNode),
+            LoginFieldPassword(passwordFocusNode: _passwordFocusNode),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -186,88 +168,36 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _formEmail() {
-    return Observer(
-      name: "login-form-email",
-      builder: (context) {
-        return TextFieldWidget(
-          label: localizations?.translate("login_field_email_label"),
-          hint: localizations?.translate("login_field_email_hint"),
-          icon: Icons.email,
-          isIcon: true,
-          textController: _emailController,
-          inputType: TextInputType.emailAddress,
-          inputAction: TextInputAction.next,
-          onChanged: (value) => _formLoginStore.setEmail(_emailController.text),
-          onFieldSubmitted: (value) =>
-              FocusScope.of(context).requestFocus(_passwordFocusNode),
-          errorText: localizations?.translate(_formLoginStore.formError.email),
-        );
-      },
-    );
-  }
-
-  Widget _formPassword() {
-    return Observer(
-      name: "login-form-password",
-      builder: (context) {
-        return TextFieldWidget(
-          label: localizations?.translate("login_field_password_label"),
-          hint: localizations?.translate("login_field_password_hint"),
-          isObscure: true,
-          icon: Icons.lock,
-          isIcon: true,
-          textController: _passwordController,
-          inputAction: TextInputAction.done,
-          inputType: TextInputType.visiblePassword,
-          focusNode: _passwordFocusNode,
-          onChanged: (value) =>
-              _formLoginStore.setPassword(_passwordController.text),
-          errorText:
-              localizations?.translate(_formLoginStore.formError.password),
-        );
-      },
-    );
-  }
-
   Widget _buildButtonLogin() {
     return Observer(
       name: "login-button",
       builder: (context) {
         return RoundedButtonWidget(
-          buttonColor: _formLoginStore.canLogin
+          buttonColor: _login.canLogin
               ? AppColors.primaryColor
               : AppColors.primaryColor.withOpacity(.5),
           buttonText: localizations!.translate("login_button")!,
           textColor: AppColors.white,
-          onPressed: _formLoginStore.canLogin
-              ? () => _login.doLogin(
-                    _formLoginStore.email,
-                    _formLoginStore.password,
-                  )
-              : null,
+          onPressed: _login.canLogin ? () => doLogin() : null,
         );
       },
     );
   }
 
-  Widget navigate(BuildContext context) {
+  void doLogin() async {
+    await _login.doLogin(_login.email, _login.password);
+
     if (_login.success) {
-      print("token => ${_userStore.token}");
+      final snackBar = SnackbarCustom.snackBar(
+          message: "Token mu adalah ${_login.token}", isError: false);
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
-      return _showErrorMessage(_login.errorStore.errorMessage);
+      final snackBar = SnackbarCustom.snackBar(
+          message: "${_login.token} ${_login.errorStore.errorMessage}",
+          isError: true);
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
-
-    return Container();
-  }
-
-  _showErrorMessage(String message) {
-    if (message.isNotEmpty) {
-      Future.delayed(const Duration(milliseconds: 0), () {
-        Fluttertoast.showToast(msg: message);
-      });
-    }
-
-    return const SizedBox.shrink();
   }
 }

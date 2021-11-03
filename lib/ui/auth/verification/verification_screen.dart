@@ -4,15 +4,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:provider/provider.dart';
 import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
+import 'package:spos/constants/snackbar.dart';
 import 'package:spos/data/repository/auth.dart';
 import 'package:spos/di/components/service_locator.dart';
 import 'package:spos/di/module/navigation_module.dart';
-import 'package:spos/models/auth/verification_model.dart';
 import 'package:spos/routes/routes.dart';
-import 'package:spos/stores/auth/verification_store.dart';
-import 'package:spos/stores/form/verification/form_verification_store.dart';
+import 'package:spos/stores/auth/register/register_store.dart';
+import 'package:spos/stores/auth/verification/verification_store.dart';
 import 'package:spos/utils/locale/app_localization.dart';
 import 'package:spos/widgets/button_widget.dart';
 import 'package:spos/widgets/numeric_pad_widget.dart';
@@ -48,31 +49,37 @@ class _VerificationScreenState extends State<VerificationScreen> {
   bool wait = true;
 
   // store
-  final VerificationStore _verification =
-      VerificationStore(getIt<RepositoryAuth>());
-  late FormVerificationStore _form;
+  late VerificationStore _verification;
+  late RegisterStore _register;
 
   @override
   void initState() {
     super.initState();
 
-    _form = FormVerificationStore(_verification, widget.email);
+    _verification = VerificationStore(getIt<RepositoryAuth>(), widget.email);
 
     // start timer countdown
     startTimer();
 
     if (widget.otp != null) {
       // doing verification here for dynamic links
-      _form.setOtp(widget.otp!);
+      _verification.setOtp(widget.otp!);
     }
-
-    if (_form.otp.length == 6) {}
   }
 
   @override
   void dispose() {
     super.dispose();
     time.cancel();
+
+    _verification.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _register = Provider.of<RegisterStore>(context);
   }
 
   @override
@@ -146,33 +153,33 @@ class _VerificationScreenState extends State<VerificationScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           _buildCodeNumberBox(
-                            _form.otp.length > 0
-                                ? _form.otp.substring(0, 1)
+                            _verification.otp.isNotEmpty
+                                ? _verification.otp.substring(0, 1)
                                 : "",
                           ),
                           _buildCodeNumberBox(
-                            _form.otp.length > 1
-                                ? _form.otp.substring(1, 2)
+                            _verification.otp.length > 1
+                                ? _verification.otp.substring(1, 2)
                                 : "",
                           ),
                           _buildCodeNumberBox(
-                            _form.otp.length > 2
-                                ? _form.otp.substring(2, 3)
+                            _verification.otp.length > 2
+                                ? _verification.otp.substring(2, 3)
                                 : "",
                           ),
                           _buildCodeNumberBox(
-                            _form.otp.length > 3
-                                ? _form.otp.substring(3, 4)
+                            _verification.otp.length > 3
+                                ? _verification.otp.substring(3, 4)
                                 : "",
                           ),
                           _buildCodeNumberBox(
-                            _form.otp.length > 4
-                                ? _form.otp.substring(4, 5)
+                            _verification.otp.length > 4
+                                ? _verification.otp.substring(4, 5)
                                 : "",
                           ),
                           _buildCodeNumberBox(
-                            _form.otp.length > 5
-                                ? _form.otp.substring(5, 6)
+                            _verification.otp.length > 5
+                                ? _verification.otp.substring(5, 6)
                                 : "",
                           ),
                         ],
@@ -186,7 +193,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
             _buttonVerification(),
             NumericPadWidget(
               onNumberSelected: (value) => setState(
-                () => _form.setOtp(value.toString()),
+                () => _verification.setOtp(value.toString()),
               ),
             ),
           ],
@@ -205,12 +212,12 @@ class _VerificationScreenState extends State<VerificationScreen> {
         child: Observer(
           builder: (context) => RoundedButtonWidget(
             isLoading: _verification.loading,
-            buttonColor: _form.canVerification
+            buttonColor: _verification.canVerification
                 ? AppColors.primaryColor
                 : AppColors.primaryColor.withOpacity(.5),
             buttonText: localizations.translate("verification_code_button")!,
             textColor: AppColors.white,
-            onPressed: _form.canVerification ? () => doRequest() : null,
+            onPressed: _verification.canVerification ? () => doRequest() : null,
           ),
         ),
       ),
@@ -282,8 +289,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
               text: AppLocalizations.of(context)
                   .translate("verification_resend_code_link"),
               style: Theme.of(context).textTheme.subtitle2,
-              recognizer: TapGestureRecognizer()
-                ..onTap = () => print('Tap Here onTap'),
+              recognizer: TapGestureRecognizer()..onTap = () => requestOtp(),
             ),
           ],
         ),
@@ -292,7 +298,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
   }
 
   Future<void> doRequest() async {
-    await _verification.otpRegister(widget.email, _form.otp);
+    await _verification.otpRegister(widget.email, _verification.otp);
 
     if (_verification.success) {
       Fluttertoast.showToast(
@@ -334,5 +340,28 @@ class _VerificationScreenState extends State<VerificationScreen> {
         });
       }
     });
+  }
+
+  void requestOtp() async {
+    await _register.register(
+        _register.email, _register.password, _register.phone, _register.name);
+
+    if (_register.success) {
+      start = 120;
+      startString = "02:00";
+      wait = true;
+
+      final snackBar = SnackbarCustom.snackBar(
+          message: _register.res!.data!, isError: false);
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      startTimer();
+    } else {
+      final snackBar = SnackbarCustom.snackBar(
+          message: _register.errorStore.errorMessage, isError: true);
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 }

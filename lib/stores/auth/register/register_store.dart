@@ -1,18 +1,31 @@
 import 'package:mobx/mobx.dart';
+import 'package:spos/data/repository/auth.dart';
+import 'package:spos/models/auth/register_model.dart';
+import 'package:spos/stores/error/error_store.dart';
+import 'package:spos/utils/dio/dio_error_utils.dart';
 import 'package:validators/validators.dart';
 
-part 'form_register_store.g.dart';
+part 'register_store.g.dart';
 
-class FormRegisterStore = _FormRegisterStore with _$FormRegisterStore;
+class RegisterStore = _RegisterStore with _$RegisterStore;
 
-abstract class _FormRegisterStore with Store {
+abstract class _RegisterStore with Store {
   // disposers
   late List<ReactionDisposer> _disposers;
+
+  // register model
+  late RegisterModel? res;
+
+  // store for handling error
+  final ErrorStore errorStore = ErrorStore();
+
+  // repository authentications
+  final RepositoryAuth _auth;
 
   // form error login for handling error
   final FormRegisterErrorStore formError = FormRegisterErrorStore();
 
-  _FormRegisterStore() {
+  _RegisterStore(RepositoryAuth repositoryAuth) : _auth = repositoryAuth {
     setupValidators();
   }
 
@@ -22,10 +35,24 @@ abstract class _FormRegisterStore with Store {
       reaction((_) => password, validatePassword),
       reaction((_) => phone, validatePhoneNumber),
       reaction((_) => name, validateName),
+      reaction((_) => res, (_) => res = null, delay: 200),
     ];
   }
 
   // variables for form register will be here
+  @observable
+  bool success = false;
+
+  static ObservableFuture<RegisterModel?> emptyResponseRegister =
+      ObservableFuture.value(null);
+
+  @observable
+  ObservableFuture<RegisterModel?> registerFuture =
+      ObservableFuture<RegisterModel?>(emptyResponseRegister);
+
+  @computed
+  bool get loading => registerFuture.status == FutureStatus.pending;
+
   @observable
   String email = "";
 
@@ -109,6 +136,35 @@ abstract class _FormRegisterStore with Store {
     } else {
       formError.name = null;
     }
+  }
+
+  @action
+  Future<RegisterModel?> register(
+    String email,
+    String password,
+    String phone,
+    String name,
+  ) async {
+    success = false;
+    final RegisterRequestModel registerRequest = RegisterRequestModel(
+      name: name,
+      password: password,
+      email: email,
+      phone: phone,
+    );
+
+    final future = _auth.postRegister(registerRequest.toJson());
+    registerFuture = ObservableFuture(future);
+
+    await future.then((data) {
+      success = true;
+      res = data;
+    }).catchError((err) {
+      success = false;
+      Map<String, dynamic> error = DioErrorUtil.handleError(err);
+
+      errorStore.errorMessage = error["reason"];
+    });
   }
 
   void dispose() {

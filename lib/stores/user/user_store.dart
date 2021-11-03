@@ -32,7 +32,6 @@ abstract class _UserStore with Store {
   void _setupDisposers() {
     _disposers = [
       reaction((_) => firstInstall, resetFirstInstall, delay: 200),
-      reaction((_) => token, resetToken, delay: 200),
     ];
   }
 
@@ -55,7 +54,7 @@ abstract class _UserStore with Store {
       await _prefs.setFirstInstall(false);
   // reset user token
   @action
-  Future<void> resetToken(String? value) async => await _prefs.removeToken();
+  Future<void> resetToken() async => await _prefs.removeToken();
 
   void dispose() {
     for (final d in _disposers) {

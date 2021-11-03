@@ -1,6 +1,10 @@
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobx/mobx.dart';
 import 'package:spos/data/repository/auth.dart';
+import 'package:spos/di/components/service_locator.dart';
+import 'package:spos/di/module/navigation_module.dart';
 import 'package:spos/models/auth/verification_model.dart';
+import 'package:spos/routes/routes.dart';
 import 'package:spos/stores/error/error_store.dart';
 import 'package:spos/utils/dio/dio_error_utils.dart';
 
@@ -12,6 +16,9 @@ abstract class _VerificationStore with Store {
   // disposers
   late List<ReactionDisposer> _disposers;
 
+  // verification store
+  final String email;
+
   // all models will be here
   late VerificationModel? res;
 
@@ -21,22 +28,27 @@ abstract class _VerificationStore with Store {
   // store for error handling
   final ErrorStore errorStore = ErrorStore();
 
-  // constructor
-  _VerificationStore(RepositoryAuth repositoryAuth) : _auth = repositoryAuth {
-    setupValidation();
-  }
+  final NavigationModule navigation = getIt<NavigationModule>();
 
-  // setupValidation
+  _VerificationStore(RepositoryAuth repositoryAuth, this.email)
+      : _auth = repositoryAuth;
+
   void setupValidation() {
     _disposers = [
-      reaction((p0) => res, (_) => res = null, delay: 200),
-      reaction((p0) => success, (_) => success = false, delay: 200),
+      reaction((_) => otp, (_) => otp = "", delay: 200),
+      reaction((_) => res, (_) => res = null, delay: 200),
     ];
   }
 
   // all variables will be here
   @observable
+  String otp = "";
+
+  @observable
   bool success = false;
+
+  @computed
+  bool get canVerification => otp.isNotEmpty && otp.length == 6;
 
   static ObservableFuture<VerificationModel?> emptyResponse =
       ObservableFuture.value(null);
@@ -48,7 +60,41 @@ abstract class _VerificationStore with Store {
   @computed
   bool get loading => verificationFuture.status == FutureStatus.pending;
 
-  // list all action will be here
+  // all action will be here
+  @action
+  void setOtp(String value) {
+    if (value == "-1") {
+      if (otp.isNotEmpty) {
+        otp = otp.substring(0, otp.length - 1);
+      }
+    } else if (value.length == 1) {
+      if (otp.length == 6) {
+        autoRequestVerification();
+        return;
+      }
+      // check if set string length is 1 (manual input)
+      otp = otp + value;
+      if (otp.length == 6) {
+        autoRequestVerification();
+      }
+    } else if (value.length == 6) {
+      otp = value;
+      autoRequestVerification();
+    }
+  }
+
+  @action
+  Future<void> autoRequestVerification() async {
+    await otpRegister(email, otp);
+
+    if (success) {
+      Fluttertoast.showToast(msg: res!.data!, gravity: ToastGravity.TOP);
+      navigation.navigateTo(Routes.login);
+    } else {
+      Fluttertoast.showToast(msg: errorStore.errorMessage);
+    }
+  }
+
   @action
   Future<VerificationModel?> otpRegister(String email, String otp) async {
     success = false;
