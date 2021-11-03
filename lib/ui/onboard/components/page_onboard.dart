@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:spos/constants/colors.dart';
 import 'package:spos/constants/dimens.dart';
 import 'package:spos/models/onboarding/onboarding_model.dart';
 import 'package:spos/utils/locale/app_localization.dart';
-import 'package:spos/widgets/button_widget.dart';
 
 class PageOnBoardingComponent extends StatelessWidget {
   final OnBoardingModel data;
